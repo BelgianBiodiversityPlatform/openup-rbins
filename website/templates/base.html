@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="{{ STATIC_URL }}/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="{{ STATIC_URL }}/css/openup.css" />
+</head>
+
+<body>
+  
+  {# Navbar #}
+  <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="brand" href="#">OpenUP RBINS contribution</a>
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li class="active"><a>Search</a></li>
+            <li><a>Contact</a></li>
+            <li><a>About</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    {% block content %}{% endblock %}
+  </div>  
+</body>
+
+</html>

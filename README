@@ -1,0 +1,16 @@
+
+Install:
+========
+
+$ python manage.py syncdb
+
+Data import:
+============
+
+- We first extract data into CSV from Andre's view:
+  
+  $ psql -h dev -U postgres -d openup_rbins
+  openup_rbins=# COPY (SELECT * FROM rbinsphotos) TO '/Users/nicolasnoe/Dropbox/BBPF/websites/openup/openup/data/rbinsphotos.csv' WITH CSV HEADER;
+  
+- Load it into the app  
+  $ ./manage.py load_rbins_data data/rbinsphotos.csv --truncate

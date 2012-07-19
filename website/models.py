@@ -44,7 +44,9 @@ class Picture(models.Model):
     province = models.ForeignKey(Province, blank=True, null=True)
     station = models.ForeignKey(Station, blank=True, null=True)
     
-    eventdate = models.DateField()
+    # We keep eventdate as a string because original data is quite incorrect.
+    # We'll add a second (interpreted) field if necessary
+    eventdate_verbatim = models.CharField(max_length=20, blank=True, null=True)
     
     # Picture
     view = models.ForeignKey(ViewType)

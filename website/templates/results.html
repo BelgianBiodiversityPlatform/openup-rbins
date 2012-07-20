@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% load querystring_tags %}
+
+{% block content %}
+<h1>Search results</h1>
+
+<ul class="thumbnails">
+  
+
+    {% for picture in pictures %}
+    <li class="span2">
+    
+    <a class="thumbnail">
+      <img src={{ picture.fileuri }} alt="" />
+      {# <div class="caption"> #}
+        {#             <h5>{{ picture.scientificname }}</h5> #}
+        {#           </div> #}
+      </a>
+    </li>  
+    {% endfor %}
+    
+  </ul>
+
+
+  <div class="pagination pagination-right">
+    <ul>
+      <li {% if not pictures.has_previous %}class="disabled"{% endif %}><a href="?page={{ pictures.previous_page_number }}">«</a></li>
+
+      <li class="active">
+        <a>Page {{ pictures.number }} of {{ pictures.paginator.num_pages }}.</a>
+      </li>
+
+      <li {% if not pictures.has_next %}class="disabled"{% endif %}><a href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.next_page_number %}">»</a></li>
+    </ul>
+  </div>
+
+  {% endblock %}

@@ -62,5 +62,6 @@ class Picture(models.Model):
     # Picture
     view = models.ForeignKey(ViewType)
     picture_id = models.IntegerField()
+    fileuri = models.URLField()
 
 

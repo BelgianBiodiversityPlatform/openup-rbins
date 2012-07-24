@@ -5,9 +5,17 @@
 {% block content %}
 <h1>Search results</h1>
 
+<h2>Active filters</h2>
+<ul>
+{% for filter in filters %}
+  {{ filter.name }}: {{ filter.value }}
+{% empty %}
+    <li>All pictures are displayed.</li>
+{% endfor %}
+</ul>
+
 <ul class="thumbnails">
   
-
     {% for picture in pictures %}
     <li class="span2">
       <a class="thumbnail" data-toggle="modal" data-target="#modal_{{ picture.id }}">

@@ -23,8 +23,12 @@ def search(request):
     
     # Filtering based on query parameters
     pictures_list = Picture.objects.all()
+    
+    filters = []
     if family_id:
         pictures_list = pictures_list.filter(family_id__exact = family_id)
+        
+        filters.append({'name': 'Family', 'value': Family.objects.get(pk=family_id).name})
         
     # Paginate
     paginator = Paginator(pictures_list, 6) # TODO: move to settings
@@ -36,7 +40,7 @@ def search(request):
     except EmptyPage: # If page is out of range (e.g. 9999), deliver last page of results.
         pictures = paginator.page(paginator.num_pages)
     
-    return my_render('results.html', request, {'pictures' : pictures})
+    return my_render('results.html', request, {'pictures': pictures, 'filters': filters})
 
 def index(request):
     families = Family.objects.all()

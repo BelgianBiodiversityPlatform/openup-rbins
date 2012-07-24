@@ -7,21 +7,7 @@
 
 <body>
   
-  {# Navbar #}
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="brand" href="{% url website-index %}">OpenUP RBINS contribution</a>
-        <div class="nav-collapse">
-          <ul class="nav">
-            <li class="active"><a>Search</a></li>
-            <li><a>Contact</a></li>
-            <li><a>About</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
+  {% include '_navbar.html' %}
 
   <div class="container">
     {% block content %}{% endblock %}

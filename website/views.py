@@ -5,6 +5,14 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from website.models import Family, Picture, Species
 
 def my_render(template_path, request_obj, context={}):
+    menu_entries = [
+        {'label': 'Search', 'url_name': 'website-index'},
+        {'label': 'Contact', 'url_name':'website-contact'},
+        {'label': 'About', 'url_name':'website-about'},
+        ]
+    
+    context.update({'menu_entries': menu_entries})
+    
     return render_to_response(template_path, context, context_instance=RequestContext(request_obj))
 
 def search(request):
@@ -42,6 +50,12 @@ def index(request):
         'families': families,
         'metrics': metrics
         })
+        
+def contact(request):
+    return my_render('contact.html', request)
+    
+def about(request):
+    return my_render('about.html', request)            
     
     
     

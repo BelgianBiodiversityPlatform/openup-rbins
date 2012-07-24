@@ -1,0 +1,17 @@
+{% load url from future %}
+
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="{% url 'website-index' %}">OpenUP RBINS contribution</a>
+      <div class="nav-collapse">
+        <ul class="nav">
+          {% for entry in menu_entries %}
+            {% url entry.url_name as the_url %}
+            <li {% ifequal request.path the_url %}class="active"{% endifequal %}><a href={{ the_url }}>{{ entry.label }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

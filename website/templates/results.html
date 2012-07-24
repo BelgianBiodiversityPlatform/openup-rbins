@@ -24,13 +24,25 @@
 
   <div class="pagination pagination-right">
     <ul>
-      <li {% if not pictures.has_previous %}class="disabled"{% endif %}><a href="?page={{ pictures.previous_page_number }}">«</a></li>
+      <li {% if not pictures.has_previous %}class="disabled"{% endif %}>
+        {% if pictures.has_previous %}
+          <a href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.previous_page_number %}">«</a>
+        {% else %}
+          <a href="javascript: void(0)">«</a>
+        {% endif %}  
+      </li>
 
       <li class="active">
         <a>Page {{ pictures.number }} of {{ pictures.paginator.num_pages }}.</a>
       </li>
 
-      <li {% if not pictures.has_next %}class="disabled"{% endif %}><a href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.next_page_number %}">»</a></li>
+      <li {% if not pictures.has_next %}class="disabled"{% endif %}>
+        {% if pictures.has_next %}
+          <a href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.next_page_number %}">»</a>
+        {% else %}
+          <a href="javascript: void(0)">«</a>
+        {% endif %} 
+      </li>
     </ul>
   </div>
 

@@ -19,7 +19,7 @@ def search(request):
         pictures_list = pictures_list.filter(family_id__exact = family_id)
         
     # Paginate
-    paginator = Paginator(pictures_list, 12) # TODO: move to settings
+    paginator = Paginator(pictures_list, 6) # TODO: move to settings
     
     try:
         pictures = paginator.page(page)

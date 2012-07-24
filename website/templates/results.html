@@ -10,14 +10,13 @@
 
     {% for picture in pictures %}
     <li class="span2">
-    
-    <a class="thumbnail">
-      <img src={{ picture.fileuri }} alt="" />
-      {# <div class="caption"> #}
-        {#             <h5>{{ picture.scientificname }}</h5> #}
-        {#           </div> #}
+      <a class="thumbnail" data-toggle="modal" data-target="#modal_{{ picture.id }}">
+        <img src={{ picture.fileuri }} alt="" />
       </a>
-    </li>  
+    </li> 
+    
+    {% include "_picture_modal.html" with picture=picture only%}
+     
     {% endfor %}
     
   </ul>
@@ -36,3 +35,4 @@
   </div>
 
   {% endblock %}
+  

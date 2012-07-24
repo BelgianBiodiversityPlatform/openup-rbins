@@ -1,0 +1,43 @@
+{# Modal... move to partial #}
+<div class="modal fade hide picture_modal" id="modal_{{ picture.id }}">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">×</button>
+    <h3>{{ picture.scientificname }}</h3>
+  </div>
+  <div class="modal-body">
+    <div class="modal-colleft">
+      <img src={{ picture.fileuri }} alt="" />
+    </div>
+    
+    <div class="modal-colright">
+      <div class="modal-attributes">
+        <h1>Attributes</h1>
+        <h2>Taxonomy</h2>
+        <table class="table">
+            <tr><td><b>Family:</b></td><td> {{ picture.family.name|default:"/" }}</td></tr>
+            <tr><td><b>Subfamily:</b></td><td> {{ picture.subfamily.name|default:"/"}}</td></tr>
+            <tr><td><b>Genus:</b></td><td> {{ picture.genus.name|default:"/" }}</td></tr>
+            <tr><td><b>Species:</b></td><td> {{ picture.species.name|default:"/" }}</td></tr>
+            <tr><td><b>Subspecies:</b></td><td> {{ picture.subspecies.name|default:"/" }}</td></tr> 
+        </table>
+        
+        <h2>Collect</h2>
+        <table class="table">
+            <tr><td><b>Date:</b></td><td> {{ picture.eventdate_verbatim|default:"/" }}</td></tr>
+            <tr><td><b>Country:</b></td><td> {{ picture.country.name|default:"/" }}</td></tr>
+            <tr><td><b>Province:</b></td><td> {{ picture.province.name|default:"/" }}</td></tr>
+            <tr><td><b>Station:</b></td><td> {{ picture.station.name|default:"/" }}</td></tr>
+        </table>
+        
+        <h2>Picture</h2>
+        <table class="table">
+            <tr><td><b>Id:</b></td><td> {{ picture.id|default:"/" }}</td></tr>
+            <tr><td><b>View:</b></td><td> {{ picture.view.name|default:"/" }}</td></tr>    
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn btn-primary" data-dismiss="modal">Close</a>
+  </div>
+</div>

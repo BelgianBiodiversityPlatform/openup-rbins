@@ -29,7 +29,11 @@
   <div class="span12">
     <h1>Browse by family</h1>
     
-    {% simple_tag_cloud families_for_tag_cloud 15 80 %}
+    {% simple_tag_cloud families count_pictures 15 80 %}
+    
+    {% for family in families %}
+      <a style="font-size: {{ family.tag_size }}px;" href="{% url website-search-view %}?family_id={{ family.id }}">{{ family.name }}</a> 
+    {% endfor %}
     
     <h1>Search pictures</h1>
     

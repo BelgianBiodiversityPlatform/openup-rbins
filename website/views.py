@@ -50,12 +50,9 @@ def index(request):
         'families': Family.objects.count(),
         'species': Species.objects.count()}
     
-    families_for_tag_cloud = [ {'label': f.name, 'count': f.count_pictures(), 'url': 'http://www.google.com'} for f in families]
-    
     return my_render('index.html', request, {
         'families': families,
         'metrics': metrics,
-        'families_for_tag_cloud': families_for_tag_cloud
         })
         
 def contact(request):

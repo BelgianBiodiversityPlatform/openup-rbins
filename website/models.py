@@ -5,12 +5,7 @@ class Family(models.Model):
     
     def count_pictures(self):
         return len(self.picture_set.all())
-    
-    # TODO: Implement tag cloud later (probably in another place: template tag ? precalculate sizes in DB ?)
-    #def get_font_size_tag_cloud(self, smallest_count, largest_count, smallest_font_size, largest_font_size):
-    #    x =  ( ((self.count_pictures()-smallest_count) * (largest_font_size-smallest_font_size)) / (largest_count-smallest_count) ) + smallest_font_size
-    #    return x
-            
+
     class Meta:
         ordering = ["name"]
     

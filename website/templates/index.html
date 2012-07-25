@@ -1,13 +1,12 @@
 {% extends "base.html" %}
 
-{% load webdesign %}
+{% load webdesign nn_tag_cloud %}
 
 {% block content %}
-<h1>RBINS OpenUp Contribution</h1>
 
 <div class="row">
   <div class="span8">
-    <h2>Introduction</h2>
+    <h1>Introduction</h1>
     {% lorem %}
   </div>
 
@@ -28,12 +27,13 @@
 
 <div class="row">
   <div class="span12">
-    <h2>Browse by family</h2>
-    {% for family in families %}
-      <a href="{% url website-search-view %}?family_id={{ family.id }}">{{ family.name }}({{ family.count_pictures }})</a>
-    {% endfor %}
-
-    <h2>Search pictures</h2>
+    <h1>Browse by family</h1>
+    
+    {% simple_tag_cloud families_for_tag_cloud 15 80 %}
+    
+    <h1>Search pictures</h1>
+    
+    
   </div>
 </div>
 

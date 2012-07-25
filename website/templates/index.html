@@ -29,16 +29,21 @@
   <div class="span12">
     <h1>Browse by family</h1>
     
-    {% simple_tag_cloud families count_pictures 15 80 %}
+    {% simple_tag_cloud families count_pictures 15 60 %}
     
-    {% for family in families %}
-      <a style="font-size: {{ family.tag_size }}px;" href="{% url website-search-view %}?family_id={{ family.id }}">{{ family.name }}</a> 
-    {% endfor %}
-    
-    <h1>Search pictures</h1>
-    
+    <div class="span8 offset2" id="tag_cloud">
+      {% for family in families %}
+        <a style="font-size: {{ family.tag_size }}px; margin: {{ family.tag_size }}px;" href="{% url website-search-view %}?family_id={{ family.id }}">{{ family.name }}</a> 
+        {% endfor %}
+    </div>
     
   </div>
 </div>
+
+<div class="row">
+  <div class="span12">
+    <h1>Search pictures</h1>
+  </div>  
+</div>  
 
 {% endblock %}  

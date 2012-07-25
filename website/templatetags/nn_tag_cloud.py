@@ -1,3 +1,4 @@
+from math import log10
 from django import template
 
 register = template.Library()
@@ -13,12 +14,12 @@ register = template.Library()
 def do_simple_tag_cloud(parser, token):
     bits = token.split_contents()
     
-    if len(bits) != 5:
-        raise template.TemplateSyntaxError("%r tag requires 4 arguments: data, count_property, min_size and max_size" % token.contents.split()[0])
+    if len(bits) != 6:
+        raise template.TemplateSyntaxError("%r tag requires 5 arguments: data, count_property, min_size, max_size and mode." % token.contents.split()[0])
             
-    tag_name, data, count_property, min_size, max_size = bits 
+    tag_name, data, count_property, min_size, max_size, mode = bits 
     
-    return TagCloudNode(data, count_property, min_size, max_size)
+    return TagCloudNode(data, count_property, min_size, max_size, mode)
     
 class TagCloudNode(template.Node):
     """
@@ -26,14 +27,16 @@ class TagCloudNode(template.Node):
     
     Usage:
     
-    {% simple_tag_cloud queryset count_attribute min_size max_size %}
+    {% simple_tag_cloud queryset count_attribute min_size max_size mode %}
     
     For each element (model instance) in queryset, this tag will add a 'tag_size' attribute.
     The value of tag_size will be in the min_size...max_size range and will reflect the value of the 'count_attribute' attribute of the instance.
     
+    Mode should be set to "lin" or "log".
+    
     Example:
     
-    {% simple_tag_cloud families count_pictures 15 80 %}
+    {% simple_tag_cloud families count_pictures 15 80 log %}
     
     => each element in families (a QuerySet) will gain a tag_size attribute. This tag size will be proportional to a_family.count_pictures and will be >= 15 and <= 80.
     
@@ -53,11 +56,16 @@ class TagCloudNode(template.Node):
     
     """
     
-    def __init__(self, data, count_property, min_size, max_size):
+    def __init__(self, data, count_property, min_size, max_size, mode):
         self.data = template.Variable(data)
         self.count_property = count_property
         self.min_size = int(min_size)
         self.max_size = int(max_size)
+        
+        if mode == 'log':
+            self.calculate = calculate_log
+        elif mode == "lin":
+            self.calculate = calculate_lin    
     
     
     def render(self, context):
@@ -68,16 +76,18 @@ class TagCloudNode(template.Node):
         results = []
         for tag in data:
             current_count = getattr(tag, self.count_property)
-            size = calculate_size(current_count, smallest_count, largest_count, self.max_size, self.min_size)
+            size = self.calculate(current_count, smallest_count, largest_count, self.max_size, self.min_size)
             tag.tag_size = size
             
         return ''    
         
 
 # Utility functions
-def calculate_size(current_count, smallest_count, largest_count, max_size, min_size):
+def calculate_lin(current_count, smallest_count, largest_count, max_size, min_size):
     return ( ((current_count-smallest_count) * (max_size-min_size)) / (largest_count-smallest_count) ) + min_size
 
+def calculate_log(current_count, smallest_count, largest_count, max_size, min_size):
+    return (log10(current_count) / log10(largest_count)) * (max_size - min_size) + min_size
 
 def find_min_max(data, count_property):
     # Expects each element of data has a 'count' attributes

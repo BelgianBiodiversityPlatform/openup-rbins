@@ -162,3 +162,5 @@ try:
     from localsettings import *
 except ImportError:
     pass
+    
+PICTURES_ONLY_SUBFOLDER = 'pictures_only'    

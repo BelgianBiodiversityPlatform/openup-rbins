@@ -1,4 +1,5 @@
 from django.db import models
+from openup import settings
 
 class Family(models.Model):
     name = models.CharField(max_length=200)
@@ -59,5 +60,13 @@ class Picture(models.Model):
     view = models.ForeignKey(ViewType)
     picture_id = models.IntegerField()
     fileuri = models.URLField()
+    
+    @property
+    def fileuri_picture_only(self):
+        # We derive it from the fileuri field
+        uri = list(self.fileuri.rpartition('/'))
+        uri[-2] = '/' + settings.PICTURES_ONLY_SUBFOLDER + '/'
+        return "".join(uri)
+        
 
 

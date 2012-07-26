@@ -2,24 +2,24 @@ body {
     padding-top: 60px;
 }
 
+.sn { /* Scientific name */
+    font-style:italic; 
+}
+
+#about_box {
+    text-align: center;
+}
+
 #tag_cloud {
     line-height: 250%;
+    text-align: center;
 }
 
-.picture_modal {
-    width: 800px;
-    margin-left: -400px;
-}
-
-.picture_modal h3 {
-    font-style:italic; /* Scientific name */
-}
-
-.modal-colleft {
+.lightbox-colleft {
     float: left;
 }
 
-.modal-colright {
+.lightbox-colright {
     float: right;
 }
 

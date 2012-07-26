@@ -18,7 +18,7 @@
   
     {% for picture in pictures %}
     <li class="span2">
-      <a class="thumbnail" data-toggle="modal" data-target="#modal_{{ picture.id }}">
+      <a class="thumbnail" data-toggle="lightbox" data-target="#lightbox_{{ picture.id }}">
         <img src={{ picture.fileuri }} alt="" />
       </a>
     </li> 

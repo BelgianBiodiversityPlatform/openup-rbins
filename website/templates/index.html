@@ -5,13 +5,33 @@
 {% block content %}
 
 <div class="row">
-  <div class="span8">
-    <h1>Introduction</h1>
-    {% lorem %}
-  </div>
+  <div class="span7 offset1">
+    <div class="row">
+      <h1>Introduction</h1>
+      <p class="lead">{% lorem %}</p>
+    </div>
 
-  <div class="span4">
-    <div class="well">
+    <div class="row">    
+      <h1>Browse by family</h1>
+
+      {% simple_tag_cloud families count_pictures 12 50 log %}
+
+      <div id="tag_cloud">
+        {% for family in families %}
+        <a style="font-size: {{ family.tag_size }}px; margin: {{ family.tag_size }}px;" href="{% url website-search-view %}?family_id={{ family.id }}">{{ family.name }}</a> 
+        {% endfor %}
+      </div>
+
+    </div>
+
+    <div class="row">
+      <h1>Search pictures</h1> 
+    </div>
+
+  </div>  
+
+  <div class="span3">
+    <div id="about_box" class="well">
       <h1>About</h1>
       <p>{{ metrics.pictures }} pictures</p>
       <p>{{ metrics.families }} families</p>
@@ -24,26 +44,5 @@
     </div>
   </div>
 </div>
-
-<div class="row">
-  <div class="span12">
-    <h1>Browse by family</h1>
-    
-    {% simple_tag_cloud families count_pictures 15 60 log %}
-    
-    <div class="span8 offset2" id="tag_cloud">
-      {% for family in families %}
-        <a style="font-size: {{ family.tag_size }}px; margin: {{ family.tag_size }}px;" href="{% url website-search-view %}?family_id={{ family.id }}">{{ family.name }}</a> 
-        {% endfor %}
-    </div>
-    
-  </div>
-</div>
-
-<div class="row">
-  <div class="span12">
-    <h1>Search pictures</h1>
-  </div>  
-</div>  
 
 {% endblock %}  

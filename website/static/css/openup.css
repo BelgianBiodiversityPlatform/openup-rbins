@@ -15,11 +15,14 @@ body {
     text-align: center;
 }
 
-.lightbox-colleft {
+#lightbox-colleft {
     float: left;
+    max-height: 650px;
+    overflow-y: auto;
 }
 
-.lightbox-colright {
+#lightbox-colright {
     float: right;
+    padding: 20px 50px;
 }
 

@@ -2,17 +2,20 @@
 <div class="lightbox fade" id="lightbox_{{ picture.id }}" style="display: none;">
 
   <div class="lightbox-content">
-    <h1 class="sn">{{ picture.scientificname }}</h1>
-    
-    <div class="lightbox-colleft">
+
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">×</button>
+      <h1 class="sn">{{ picture.scientificname }}</h1>
+    </div>
+
+    <div id="lightbox-colleft">
       <img src="{{ picture.fileuri_picture_only }}" alt="" />
     </div>
 
-    <div class="lightbox-colright">
-
-      <h2>Attributes</h2>
-      <h3>Taxonomy</h3>
-      <table class="table">
+    <div id="lightbox-colright">
+      
+      <h2>Taxonomy</h2>
+      <table class="table table-condensed table-striped table-bordered">
         <tr><td><b>Family:</b></td><td> {{ picture.family.name|default:"/" }}</td></tr>
         <tr><td><b>Subfamily:</b></td><td> {{ picture.subfamily.name|default:"/"}}</td></tr>
         <tr><td><b>Genus:</b></td><td> {{ picture.genus.name|default:"/" }}</td></tr>
@@ -20,21 +23,28 @@
         <tr><td><b>Subspecies:</b></td><td> {{ picture.subspecies.name|default:"/" }}</td></tr> 
       </table>
 
-      <h3>Collect</h3>
-      <table class="table">
+      <h2>Collect</h2>
+      <table class="table table-condensed table-striped table-bordered">
         <tr><td><b>Date:</b></td><td> {{ picture.eventdate_verbatim|default:"/" }}</td></tr>
         <tr><td><b>Country:</b></td><td> {{ picture.country.name|default:"/" }}</td></tr>
         <tr><td><b>Province:</b></td><td> {{ picture.province.name|default:"/" }}</td></tr>
         <tr><td><b>Station:</b></td><td> {{ picture.station.name|default:"/" }}</td></tr>
       </table>
 
-      <h3>Picture</h3>
-      <table class="table">
+      <h2>Picture</h2>
+      <table class="table table-condensed table-striped table-bordered">
         <tr><td><b>Id:</b></td><td> {{ picture.id|default:"/" }}</td></tr>
         <tr><td><b>View:</b></td><td> {{ picture.view.name|default:"/" }}</td></tr>    
       </table>
 
+      {#  Show license + (c) Noël MAL #}
+
+      <div class="alert alert-info">Picture by <strong>Noël MAL</strong>.</div>
+
     </div>
+    
+    
+    
   </div>
 
 </div>

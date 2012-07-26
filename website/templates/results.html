@@ -3,7 +3,7 @@
 {% load querystring_tags %}
 
 {% block content %}
-<h1>Search results</h1>
+<h1>{{ pictures.paginator.count }} results</h1>
 
 <h2>Active filters</h2>
 <ul>
@@ -48,7 +48,7 @@
         {% if pictures.has_next %}
           <a href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.next_page_number %}">»</a>
         {% else %}
-          <a href="javascript: void(0)">«</a>
+          <a href="javascript: void(0)">»</a>
         {% endif %} 
       </li>
     </ul>

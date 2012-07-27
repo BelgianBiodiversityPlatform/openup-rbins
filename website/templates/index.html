@@ -13,7 +13,7 @@
     </div>
 
     <div class="row">    
-      <h1>Browse by family</h1>
+      <h1>Browse pictures by family</h1>
 
       {% simple_tag_cloud families count_pictures 12 50 log %}
 
@@ -26,7 +26,39 @@
     </div>
 
     <div class="row">
-      <h1>Search pictures</h1> 
+      <h1>Search pictures</h1>
+      
+      <form class="form-horizontal">
+        <fieldset>
+          <legend>Taxonomy</legend>
+          
+          <div class="control-group">
+            <label class="control-label" for="family">Family</label>
+            <div class="controls"><select id="family"><option>AAA</option></select></select></div>
+          </div>
+          
+          <div class="control-group">
+            <label class="control-label" for="subfamily">SubFamily</label>
+            <div class="controls"><select id="subfamily"><option>BBB</option></select></select></div>
+          </div>
+          
+          <div class="control-group">
+            <label class="control-label" for="genus">Genus</label>
+            <div class="controls"><select id="genus"><option>CCC</option></select></select></div>
+          </div>
+          
+          <div class="control-group">
+            <label class="control-label" for="sn">Scientific name contains</label>
+            <div class="controls"><input type="text" id="sn"></div>
+          </div>
+          
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Search</button>
+          </div>  
+        </fieldset>
+      </form> 
+      
+      
     </div>
 
   </div>  

@@ -30,11 +30,13 @@
   </ul>
 
 
+  {# TODO: implement JS-based shortcuts so they cna be used without the ALT key  #}
+  {# TODO: Describe the sortcuts on the page #}
   <div class="pagination pagination-right">
     <ul>
       <li {% if not pictures.has_previous %}class="disabled"{% endif %}>
         {% if pictures.has_previous %}
-          <a href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.previous_page_number %}">«</a>
+          <a accesskey="<" href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.previous_page_number %}">«</a>
         {% else %}
           <a href="javascript: void(0)">«</a>
         {% endif %}  
@@ -46,7 +48,7 @@
 
       <li {% if not pictures.has_next %}class="disabled"{% endif %}>
         {% if pictures.has_next %}
-          <a href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.next_page_number %}">»</a>
+          <a accesskey=">" href="{% url website-search-view %}?{% qs_alter request.GET page=pictures.next_page_number %}">»</a>
         {% else %}
           <a href="javascript: void(0)">»</a>
         {% endif %} 

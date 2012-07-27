@@ -8,7 +8,12 @@
         <ul class="nav">
           {% for entry in menu_entries %}
             {% url entry.url_name as the_url %}
-            <li {% ifequal request.path the_url %}class="active"{% endifequal %}><a href={{ the_url }}>{{ entry.label }}</a></li>
+            <li {% ifequal request.path the_url %}class="active"{% endifequal %}>
+              <a href={{ the_url }}>
+                <i class="{{ entry.icon_name }} icon-white"></i>
+                {{ entry.label }}
+              </a>
+            </li>
           {% endfor %}
         </ul>
       </div>

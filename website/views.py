@@ -6,9 +6,9 @@ from website.models import Family, Picture, Species
 
 def my_render(template_path, request_obj, context={}):
     menu_entries = [
-        {'label': 'Search', 'url_name': 'website-index'},
-        {'label': 'Contact', 'url_name':'website-contact'},
-        {'label': 'About', 'url_name':'website-about'},
+        {'label': 'Search', 'url_name': 'website-index', 'icon_name': 'icon-search'},
+        {'label': 'Contact', 'url_name':'website-contact', 'icon_name': 'icon-comment'},
+        {'label': 'About', 'url_name':'website-about', 'icon_name': 'icon-asterisk'},
         ]
     
     context.update({'menu_entries': menu_entries})

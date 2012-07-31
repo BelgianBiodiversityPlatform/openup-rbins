@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load webdesign nn_tag_cloud %}
+{% load webdesign django_nuages_tag %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
     <div class="row">    
       <h1>Browse pictures by family</h1>
 
-      {% tag_cloud families count_pictures font_size 10 45 log %}
+      {% compute_tag_cloud families count_pictures font_size 10 45 log %}
 
       <div id="tag_cloud" class="well">
         {% for family in families %}

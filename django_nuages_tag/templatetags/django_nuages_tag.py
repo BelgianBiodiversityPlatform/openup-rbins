@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from math import log10
+
 from django import template
 
 register = template.Library()
@@ -11,7 +14,7 @@ register = template.Library()
 # TODO Improve tag so it works with both QuerySets (ok now) and list of dict (not ok now)
 
 @register.tag
-def tag_cloud(parser, token):
+def compute_tag_cloud(parser, token):
     """
     Simple helper to allow generation of tag clouds.
     
@@ -106,7 +109,8 @@ def calculate_lin(current_count, smallest_count, largest_count, max_size, min_si
 def calculate_log(current_count, smallest_count, largest_count, max_size, min_size):
     """ Calculate ratio (logarithmic version). """
     
-    return (log10(current_count) / log10(largest_count)) * (max_size - min_size) + min_size
+    return ((log10(current_count) / log10(largest_count)) * (max_size 
+            -min_size) + min_size)
 
 def find_min_max(container, count_property):
     """ Returns a tuple containing the min. and max. values of the 'count_property' property of each element of the container """

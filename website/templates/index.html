@@ -15,11 +15,17 @@
     <div class="row">    
       <h1>Browse pictures by family</h1>
 
-      {% simple_tag_cloud families count_pictures 12 50 log %}
+      {% simple_tag_cloud families count_pictures 10 45 log %}
 
       <div id="tag_cloud" class="well">
         {% for family in families %}
-        <a style="font-size: {{ family.tag_size }}px; margin: {{ family.tag_size }}px;" href="{% url website-search-view %}?family_id={{ family.id }}">{{ family.name }}</a> 
+        <a 
+          class="tag-cloud-entry" 
+          style="font-size: {{ family.tag_size }}px; margin: {{ family.tag_size }}px;" 
+          title="{{ family.count_pictures }} picture{{ family.count_pictures|pluralize }}" 
+          href="{% url website-search-view %}?family_id={{ family.id }}">
+            {{ family.name }}
+        </a> 
         {% endfor %}
       </div>
 
@@ -84,6 +90,9 @@
 {% block additional_js %}
 <script type="text/javascript">
   $(function(){
+  
+   $('.tag-cloud-entry').tooltip();
+    
    $('#submit_search').click(function() {
      var url;
      var filters = {};

@@ -15,14 +15,14 @@
     <div class="row">    
       <h1>Browse pictures by family</h1>
 
-      {% simple_tag_cloud families count_pictures 10 45 log %}
+      {% tag_cloud families count_pictures font_size 10 45 log %}
 
       <div id="tag_cloud" class="well">
         {% for family in families %}
         <a 
           class="tag-cloud-entry" 
-          style="font-size: {{ family.tag_size }}px; margin: {{ family.tag_size }}px;" 
-          title="{{ family.count_pictures }} picture{{ family.count_pictures|pluralize }}" 
+          style="font-size: {{ family.font_size }}px; margin: {{ family.font_size }}px;" 
+            title="{{ family.count_pictures }} picture{{ family.count_pictures|pluralize }}" 
           href="{% url website-search-view %}?family_id={{ family.id }}">
             {{ family.name }}
         </a> 

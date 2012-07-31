@@ -18,6 +18,7 @@ def my_render(template_path, request_obj, context={}):
 def search(request):
     # Save query parameters
     family_id = request.GET.get('family_id')
+    sn_contains = request.GET.get('sn_contains')
     
     page = request.GET.get('page')
     
@@ -25,10 +26,14 @@ def search(request):
     pictures_list = Picture.objects.all()
     
     filters = []
+    
     if family_id:
         pictures_list = pictures_list.filter(family_id__exact = family_id)
-        
         filters.append({'name': 'Family', 'value': Family.objects.get(pk=family_id).name})
+        
+    if sn_contains:
+        pictures_list = pictures_list.filter(scientificname__icontains = sn_contains)
+        filters.append({'name': 'Scientific name contains', 'value': sn_contains })    
         
     # Paginate
     paginator = Paginator(pictures_list, 6) # TODO: move to settings

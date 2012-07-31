@@ -17,7 +17,7 @@
 
       {% simple_tag_cloud families count_pictures 12 50 log %}
 
-      <div id="tag_cloud">
+      <div id="tag_cloud" class="well">
         {% for family in families %}
         <a style="font-size: {{ family.tag_size }}px; margin: {{ family.tag_size }}px;" href="{% url website-search-view %}?family_id={{ family.id }}">{{ family.name }}</a> 
         {% endfor %}
@@ -53,7 +53,7 @@
           </div>
           
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Search</button>
+            <button id="submit_search" type="submit" class="btn btn-primary">Search</button>
           </div>  
         </fieldset>
       </form> 
@@ -66,9 +66,9 @@
   <div class="span3">
     <div id="about_box" class="well">
       <h1>About</h1>
-      <p>{{ metrics.pictures }} pictures</p>
-      <p>{{ metrics.families }} families</p>
-      <p>{{ metrics.species }} species</p>
+      <p><span class="badge badge-success">{{ metrics.pictures }}</span> pictures</p>
+      <p><span class="badge badge-warning">{{ metrics.families }}</span> families</p>
+      <p><span class="badge badge-important">{{ metrics.species }}</span> species</p>
 
       {# TODO: Implement last update features... how ? #}
       <p>Last updated on {% now "jS o\f F" %}</p>
@@ -78,4 +78,29 @@
   </div>
 </div>
 
+{% endblock %}
+
+
+{% block additional_js %}
+<script type="text/javascript">
+  $(function(){
+   $('#submit_search').click(function() {
+     var url;
+     var filters = {};
+     
+     if($('#sn').val() !== "") {
+       filters.sn_contains = $('#sn').val();
+     }   
+     
+     url = "{% url website-search-view %}" + "?" + $.param(filters);
+     
+     window.location.href = url;
+     
+     return false;
+   });
+   
+   
+  });
+
+</script>
 {% endblock %}  

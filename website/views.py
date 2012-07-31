@@ -45,7 +45,7 @@ def search(request):
     except EmptyPage: # If page is out of range (e.g. 9999), deliver last page of results.
         pictures = paginator.page(paginator.num_pages)
     
-    return my_render('results.html', request, {'pictures': pictures, 'filters': filters})
+    return my_render('results.html', request, {'pictures': pictures, 'filters': filters, 'force_menu_entry': 'Search'})
 
 def index(request):
     families = Family.objects.all()

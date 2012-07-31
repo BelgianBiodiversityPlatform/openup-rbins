@@ -87,6 +87,8 @@
    $('#submit_search').click(function() {
      var url;
      var filters = {};
+    // TODO: better code ?
+    // TODO: trim / urlencode values ? 
      
      if($('#sn').val() !== "") {
        filters.sn_contains = $('#sn').val();

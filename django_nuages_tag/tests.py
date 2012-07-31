@@ -1,16 +1,14 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+from django.utils import unittest
+from django.template import Template, Context, TemplateSyntaxError
 
-Replace this with more appropriate tests for your application.
-"""
+class TemplateTagsTestCase(unittest.TestCase):
+    def setUp(self):
+        pass
 
-from django.test import TestCase
-
-
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+    def test_compute_tag_cloud_requires_arguments(self):
+        with self.assertRaises(TemplateSyntaxError):
+            t = Template('{% load django_nuages_tag %}'
+                         '{% compute_tag_cloud %}')
+            c = Context({})
+            t.render(c)             
+        

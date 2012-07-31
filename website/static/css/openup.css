@@ -6,8 +6,15 @@ body {
     font-style:italic; 
 }
 
+h1 {
+    font-size: 40px;
+    line-height: 66px;
+}
+
 #about_box {
     text-align: center;
+    color: white;
+    background-color: black;
 }
 
 #tag_cloud {

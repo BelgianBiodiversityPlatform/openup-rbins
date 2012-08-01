@@ -15,13 +15,15 @@
     <div class="row">    
       <h1>Browse pictures by family</h1>
 
-      {% compute_tag_cloud families count_pictures font_size 10 45 log %}
+      {% compute_tag_cloud families count_pictures font_size 10 55 log %}
+      {% compute_tag_cloud families count_pictures margin 5 28 log %}
+      {% compute_tag_cloud families count_pictures opacity 0.7 1 log %}
 
-      <div id="tag_cloud" class="well">
+      <div id="tag_cloud">
         {% for family in families %}
         <a 
           class="tag-cloud-entry" 
-          style="font-size: {{ family.font_size }}px; margin: {{ family.font_size }}px;" 
+          style="font-size: {{ family.font_size }}px; margin: {{ family.margin }}px; opacity: {{ family.opacity }}" 
             title="{{ family.count_pictures }} picture{{ family.count_pictures|pluralize }}" 
           href="{% url website-search-view %}?family_id={{ family.id }}">
             {{ family.name }}
@@ -36,7 +38,6 @@
       
       <form class="form-horizontal">
         <fieldset>
-          <legend>Taxonomy</legend>
           
           <div class="control-group">
             <label class="control-label" for="family">Family</label>
@@ -72,14 +73,18 @@
   <div class="span3">
     <div id="about_box" class="well">
       <h1>About</h1>
-      <p><span class="badge badge-success">{{ metrics.pictures }}</span> pictures</p>
-      <p><span class="badge badge-warning">{{ metrics.families }}</span> families</p>
-      <p><span class="badge badge-important">{{ metrics.species }}</span> species</p>
 
+      <table>
+        <tr><td><span class="badge badge-success">{{ metrics.pictures }}</span></td> <td>pictures</td></tr>
+        <tr><td><span class="badge badge-warning">{{ metrics.families }}</span></td> <td>families</td></tr>
+        <tr><td><span class="badge badge-important">{{ metrics.species }}</span></td> <td>species</td></tr>
+      </table>  
+
+      <p><a href="#">Explore data on Europeana</a></p>
+      <p><a href="#">Explore data on GBIF</a></p>
+      
       {# TODO: Implement last update features... how ? #}
-      <p>Last updated on {% now "jS o\f F" %}</p>
-      <p><a href="#">View data on Europeana</a></p>
-      <p><a href="#">View data on GBIF</a></p>
+      <p>Last updated on {% now "jS F o" %}</p>
     </div>
   </div>
 </div>

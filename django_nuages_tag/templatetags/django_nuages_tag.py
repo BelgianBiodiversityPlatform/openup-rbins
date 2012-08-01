@@ -75,8 +75,8 @@ class TagCloudNode(template.Node):
         self.data = template.Variable(data)
         self.count_property = count_property
         self.new_property = new_property
-        self.min_size = int(min_size)
-        self.max_size = int(max_size)
+        self.min_size = float(min_size)
+        self.max_size = float(max_size)
         
         if mode == 'log':
             self.calculate = calculate_log

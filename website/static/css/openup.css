@@ -9,12 +9,30 @@ body {
 h1 {
     font-size: 40px;
     line-height: 66px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid;
 }
 
 #about_box {
     text-align: center;
     color: white;
     background-color: black;
+}
+
+#about_box h1 {
+    border: 0;
+    line-height: 36px;
+}
+
+#about_box table {
+    margin-bottom: 18px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#about_box table td{
+    padding: 8px;
+    text-align: left;
 }
 
 #tag_cloud {

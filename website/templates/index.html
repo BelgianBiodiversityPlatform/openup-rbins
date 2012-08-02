@@ -36,23 +36,10 @@
     <div class="row">
       <h1>Search pictures</h1>
       
-      <form class="form-horizontal">
+      <form id="search_form" class="form-horizontal">
         <fieldset>
           
-          <div class="control-group">
-            <label class="control-label" for="family">Family</label>
-            <div class="controls"><select id="family"><option>AAA</option></select></select></div>
-          </div>
-          
-          <div class="control-group">
-            <label class="control-label" for="subfamily">SubFamily</label>
-            <div class="controls"><select id="subfamily"><option>BBB</option></select></select></div>
-          </div>
-          
-          <div class="control-group">
-            <label class="control-label" for="genus">Genus</label>
-            <div class="controls"><select id="genus"><option>CCC</option></select></select></div>
-          </div>
+          <div id="taxonomic_select_container"></div>
           
           <div class="control-group">
             <label class="control-label" for="sn">Scientific name contains</label>
@@ -94,25 +81,43 @@
 {% block additional_js %}
 <script type="text/javascript">
   $(function(){
-  
-   $('.tag-cloud-entry').tooltip();
+    // App configuration
+    OpenUp.config.dom = {
+      'taxonomic_select_container': $('#taxonomic_select_container'), 
+    };
+    // Taxonomy levels included in search form
+    OpenUp.config.search_taxonomy_levels = [
+      {label: 'Family', html_id: 'family', server_model: 'Family'}, 
+      {label: 'Genus', html_id: 'genus', server_model: 'Genus'},
+      {label: 'Species', html_id: 'species', server_model: 'Species'}
+    ];
     
-   $('#submit_search').click(function() {
-     var url;
-     var filters = {};
-    // TODO: better code ?
-    // TODO: trim / urlencode values ? 
+    OpenUp.config.urls = {
+      'populate_taxonomic_lists': '{% url ajax-populate-list %}', 
+    }
+    
+    
+    OpenUp.addTaxonomySelectsToSearchForm();
+    
+    // Install bootstrap tooltips on tag loud
+    $('.tag-cloud-entry').tooltip();
+    
+    // Search form submission handling
+    $('#submit_search').click(function() {
+      var url;
+      var filters = {};
+      // TODO: better code ?
+      // TODO: trim / urlencode values ? 
      
-     if($('#sn').val() !== "") {
-       filters.sn_contains = $('#sn').val();
-     }   
+      if($('#sn').val() !== "") {
+        filters.sn_contains = $('#sn').val();
+      }   
      
-     url = "{% url website-search-view %}" + "?" + $.param(filters);
+      url = "{% url website-search-view %}" + "?" + $.param(filters);
      
-     window.location.href = url;
-     
-     return false;
-   });
+      window.location.href = url;    
+      return false;
+    });
    
    
   });

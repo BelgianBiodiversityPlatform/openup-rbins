@@ -1,8 +1,10 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.http import HttpResponse
+from django.utils import simplejson
 
-from website.models import Family, Picture, Species
+from website.models import Family, Genus, Species, Picture
 
 def my_render(template_path, request_obj, context={}):
     menu_entries = [
@@ -64,7 +66,20 @@ def contact(request):
     return my_render('contact.html', request)
     
 def about(request):
-    return my_render('about.html', request)            
+    return my_render('about.html', request)
     
+# AJAX/JSON views
+def ajax_populate_list(request):
+    target_model_name = request.GET['target_model']
+    
+    entries = globals()[target_model_name].objects.all()
+    json = simplejson.dumps([ {'pk': e.pk, 'name': e.name } for e in entries])
+    
+    return returns_json(json)
+    
+# Helpers	 
+def returns_json(json):
+    return HttpResponse(json, mimetype='application/javascript')    
+        
     
     

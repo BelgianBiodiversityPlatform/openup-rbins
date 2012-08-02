@@ -158,9 +158,17 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request"
 )
 
-try:
-    from localsettings import *
-except ImportError:
-    pass
+import socket
+HOSTNAME = socket.gethostname().lower().split('.')[0]
+
+if HOSTNAME == 'nicolass-macbook-pro':
+    try:
+        from localsettings import *
+    except ImportError:
+        pass
+else:
+    # For heroku:
+    import dj_database_url
+    DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}        
     
 PICTURES_ONLY_SUBFOLDER = 'pictures_only'    

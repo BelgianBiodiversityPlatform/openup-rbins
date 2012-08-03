@@ -18,13 +18,16 @@ class Command(BaseCommand):
         )
     
     def handle(self, *args, **options):
-        source_csv_path = args[0]
-        
-        if options['truncate']:
-            self.stdout.write('Truncating tables to get rid of previous data...\n')
-            self._truncate_existing_tables()
+        if len(args) == 0:
+            raise CommandError('You should provide the path to the source file as an argument.')
+        else:
+            source_csv_path = args[0]
             
-        self._import_csv_file(source_csv_path)    
+            if options['truncate']:
+                self.stdout.write('Truncating tables to get rid of previous data...\n')
+                self._truncate_existing_tables()
+            
+            self._import_csv_file(source_csv_path)    
     
     def _import_csv_file(self, source_path):
         self.stdout.write('Importing data from CSV...\n')

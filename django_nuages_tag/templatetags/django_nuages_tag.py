@@ -89,10 +89,10 @@ class TagCloudNode(template.Node):
            
         results = []
         for tag in data:
-            current_count = getattr(tag, self.count_property)
+            current_count = get_attribute_or_key(tag, self.count_property)
             size = self.calculate(current_count, smallest_count, largest_count, 
                                   self.max_size, self.min_size)
-            setattr(tag, self.new_property, size)
+            set_attribute_or_key(tag, self.new_property, size)
             
         return '' # Template tags should always returns a string.    
         
@@ -112,13 +112,27 @@ def calculate_log(current_count, smallest_count, largest_count, max_size, min_si
     return ((log10(current_count) / log10(largest_count)) * (max_size 
             -min_size) + min_size)
 
+# To allows indifferent access to a Django QuerySet or to a Python dict
+def get_attribute_or_key(obj, property_name):
+    try:
+        r = getattr(obj, property_name)
+    except AttributeError:
+        r = obj[property_name]
+    return r
+    
+def set_attribute_or_key(obj, property_name, property_value):
+    try:
+        setattr(obj, property_name, property_value)
+    except AttributeError:
+        obj[property_name] = property_value
+
 def find_min_max(container, count_property):
     """ Returns a tuple containing the min. and max. values of the 'count_property' property of each element of the container """
-    smallest_count = getattr(container[0], count_property)
-    largest_count = getattr(container[0], count_property)
+    smallest_count = get_attribute_or_key(container[0], count_property)
+    largest_count = get_attribute_or_key(container[0], count_property)
     
     for tag in container:
-        current_count = getattr(tag, count_property)
+        current_count = get_attribute_or_key(tag, count_property)
         if current_count < smallest_count:
             smallest_count = current_count
         if current_count > largest_count:

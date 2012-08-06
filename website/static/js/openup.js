@@ -13,6 +13,25 @@ if (!String.prototype.supplant) {
 // We use the "module pattern"
 OpenUp = function(){
     // private variables and methods
+    var getTaxonomicFilterFromLists = function(taxonomy_levels){
+        // We start by the most specific (=last) one
+        var reversed = taxonomy_levels.slice(0).reverse()
+        var found_model, found_id;
+        
+        $.each(reversed, function(i, level){
+            //console.log
+            var val = $('#' + level.html_id).val();
+            
+            if(val !== 'ALL') {
+               found_model = level.server_model;
+               found_id = val;
+               return
+           } 
+        });
+        
+        console.log(found_model + ':' + found_id)
+    };
+    
     var generateFormEntryForTaxonomicLevel = function(level){
         var str = '<div class="control-group">\
             <label class="control-label" for="{html_id}">{label}</label>\
@@ -42,6 +61,31 @@ OpenUp = function(){
             $.each(conf.search_taxonomy_levels, function(i, level){
                 conf.dom.taxonomic_select_container.append(generateFormEntryForTaxonomicLevel(level));
             });
+        },
+        initSearchFormSubmission: function(){
+            var conf = OpenUp.config;
+            
+            conf.dom.search_button.click(function() {
+                var url, sn, taxonomic_filter;
+                var filters = {};
+                
+                // Add scientific name if necessary
+                sn = conf.dom.sn_text_field.val();
+                if(sn !== "") {
+                    filters.sn_contains = sn;
+                }
+                
+                taxonomic_filter = getTaxonomicFilterFromLists(conf.search_taxonomy_levels);
+                if(taxonomic_filter) {
+                    filters.taxonomic_filter = taxonomic_filter;
+                }   
+
+                url = conf.urls.search + "?" + $.param(filters);
+
+                //window.location.href = url;    
+                return false;
+            });
+            
         }
     };
     }();

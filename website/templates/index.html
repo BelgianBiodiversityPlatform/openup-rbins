@@ -84,8 +84,11 @@
     // App configuration
     OpenUp.config.dom = {
       'taxonomic_select_container': $('#taxonomic_select_container'), 
+      'search_button'             : $('#submit_search'),
+      'sn_text_field'             : $('#sn')
     };
     // Taxonomy levels included in search form
+    // They shoud be sorted by rank 
     OpenUp.config.search_taxonomy_levels = [
       {label: 'Family', html_id: 'family', server_model: 'Family'}, 
       {label: 'Genus', html_id: 'genus', server_model: 'Genus'},
@@ -93,9 +96,9 @@
     ];
     
     OpenUp.config.urls = {
-      'populate_taxonomic_lists': '{% url ajax-populate-list %}', 
+      'populate_taxonomic_lists': '{% url ajax-populate-list %}',
+      'search'                  : '{% url website-search-view %}'
     }
-    
     
     OpenUp.addTaxonomySelectsToSearchForm();
     
@@ -103,21 +106,7 @@
     $('.tag-cloud-entry').tooltip();
     
     // Search form submission handling
-    $('#submit_search').click(function() {
-      var url;
-      var filters = {};
-      // TODO: better code ?
-      // TODO: trim / urlencode values ? 
-     
-      if($('#sn').val() !== "") {
-        filters.sn_contains = $('#sn').val();
-      }   
-     
-      url = "{% url website-search-view %}" + "?" + $.param(filters);
-     
-      window.location.href = url;    
-      return false;
-    });
+    OpenUp.initSearchFormSubmission();
    
    
   });

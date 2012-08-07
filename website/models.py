@@ -61,6 +61,14 @@ class Picture(models.Model):
     picture_id = models.IntegerField()
     fileuri = models.URLField()
     
+    # For search:returns the FK name based on the model we want
+    # TODO: Make this dynamic ?
+    model_fk_mapping = {
+        'Family': 'family_id',
+        'Genus': 'genus_id',
+        'Species': 'species_id',
+    }
+    
     @property
     def fileuri_picture_only(self):
         # We derive it from the fileuri field

@@ -1,3 +1,7 @@
+from urlparse import parse_qs
+
+import pprint
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -22,6 +26,10 @@ def search(request):
     family_id = request.GET.get('family_id')
     sn_contains = request.GET.get('sn_contains')
     
+    taxonomic_filter_model = request.GET.get('taxonomic_filter_model')
+    taxonomic_filter_id = request.GET.get('taxonomic_filter_id')
+    taxonomic_filter_label = request.GET.get('taxonomic_filter_label')
+    
     page = request.GET.get('page')
     
     # Filtering based on query parameters
@@ -35,7 +43,15 @@ def search(request):
         
     if sn_contains:
         pictures_list = pictures_list.filter(scientificname__icontains = sn_contains)
-        filters.append({'name': 'Scientific name contains', 'value': sn_contains })    
+        filters.append({'name': 'Scientific name contains', 'value': sn_contains })
+        
+    if taxonomic_filter_model:
+        selected_instance = globals()[taxonomic_filter_model].objects.get(pk=taxonomic_filter_id)
+        
+        filters.append({'name': taxonomic_filter_label, 'value': selected_instance.name})        
+        
+        pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[taxonomic_filter_label]: selected_instance.pk}) 
+        
         
     # Paginate
     paginator = Paginator(pictures_list, 6) # TODO: move to settings

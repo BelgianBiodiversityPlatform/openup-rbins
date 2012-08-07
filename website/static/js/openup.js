@@ -19,17 +19,26 @@ OpenUp = function(){
         var found_model, found_id;
         
         $.each(reversed, function(i, level){
-            //console.log
+            //console.log('P: ' + level.html_id);
             var val = $('#' + level.html_id).val();
             
             if(val !== 'ALL') {
                found_model = level.server_model;
                found_id = val;
-               return
+               found_label = level.label;
+               return false; // Breaks $.each
            } 
         });
         
-        console.log(found_model + ':' + found_id)
+        if (found_model) {
+            return {
+                'model': found_model,
+                'id': found_id,
+                'label': found_label
+            }
+        } else { // Nothing is selected
+            return false;
+        }
     };
     
     var generateFormEntryForTaxonomicLevel = function(level){
@@ -77,12 +86,14 @@ OpenUp = function(){
                 
                 taxonomic_filter = getTaxonomicFilterFromLists(conf.search_taxonomy_levels);
                 if(taxonomic_filter) {
-                    filters.taxonomic_filter = taxonomic_filter;
+                    filters.taxonomic_filter_model = taxonomic_filter.model;
+                    filters.taxonomic_filter_id = taxonomic_filter.id;
+                    filters.taxonomic_filter_label = taxonomic_filter.label;
                 }   
 
                 url = conf.urls.search + "?" + $.param(filters);
 
-                //window.location.href = url;    
+                window.location.href = url;    
                 return false;
             });
             

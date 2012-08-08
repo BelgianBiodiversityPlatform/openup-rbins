@@ -15,7 +15,7 @@ OpenUp = function(){
     // private variables and methods
     var getTaxonomicFilterFromLists = function(taxonomy_levels){
         // We start by the most specific (=last) one
-        var reversed = taxonomy_levels.slice(0).reverse()
+        var reversed = taxonomy_levels.slice(0).reverse();
         var found_model, found_id;
         
         $.each(reversed, function(i, level){
@@ -35,7 +35,7 @@ OpenUp = function(){
                 'model': found_model,
                 'id': found_id,
                 'label': found_label
-            }
+            };
         } else { // Nothing is selected
             return false;
         }
@@ -94,7 +94,7 @@ OpenUp = function(){
         $.getJSON(OpenUp.config.urls.populate_taxonomic_lists, params, function(data){
             var select_id = level_to_populate.html_id;
             var $select = $('#' + select_id);
-            $select.empty()
+            $select.empty();
             
             $select.append('<option value="ALL">--- ALL ---</option>');
             

@@ -1,6 +1,13 @@
 from django.db import models
 from openup import settings
 
+def first_rank_higher(first, second):
+    RANKS = [
+        'Family', 'Subfamily', 'Genus', 'Species', 'Subspecies'
+    ]
+    
+    return (RANKS.index(first) < RANKS.index(second))
+
 class Family(models.Model):
     name = models.CharField(max_length=200)
     
@@ -12,16 +19,26 @@ class Family(models.Model):
         ordering = ["name"]
     
 class Subfamily(models.Model):
-    name = models.CharField(max_length=200)    
+    name = models.CharField(max_length=200)
+    family = models.ForeignKey(Family, null=True, blank=True)   
 
 class Genus(models.Model):
     name = models.CharField(max_length=200)
+    family = models.ForeignKey(Family, null=True, blank=True)
+    subfamily = models.ForeignKey(Subfamily, null=True, blank=True)
 
 class Species(models.Model):
     name = models.CharField(max_length=200)
+    family = models.ForeignKey(Family, null=True, blank=True)
+    subfamily = models.ForeignKey(Subfamily, null=True, blank=True)
+    genus = models.ForeignKey(Genus, null=True, blank=True )
 
 class Subspecies(models.Model):
     name = models.CharField(max_length=200)
+    family = models.ForeignKey(Family, null=True, blank=True)
+    subfamily = models.ForeignKey(Subfamily, null=True, blank=True)
+    genus = models.ForeignKey(Genus, null=True, blank=True )
+    species = models.ForeignKey(Species, null=True, blank=True)
     
 class ViewType(models.Model):
     name = models.CharField(max_length=200)    
@@ -62,6 +79,7 @@ class Picture(models.Model):
     fileuri = models.URLField()
     
     # For search:returns the FK name based on the model we want
+    # This FK is in use in the Picture table, but also in the different Taxon models (to reference the parent levels)
     # TODO: Make this dynamic ?
     model_fk_mapping = {
         'Family': 'family_id',

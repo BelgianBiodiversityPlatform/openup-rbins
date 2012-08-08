@@ -8,7 +8,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.utils import simplejson
 
-from website.models import Family, Genus, Species, Picture
+from website.models import Family, Genus, Species, Picture, first_rank_higher
 
 def my_render(template_path, request_obj, context={}):
     menu_entries = [
@@ -85,11 +85,42 @@ def about(request):
     return my_render('about.html', request)
     
 # AJAX/JSON views
+
+# Can be called:
+# 1) In reaction to a list  change (details in changed_rank and changed_id)
+# 2) At page load for initial populate (need all values)
 def ajax_populate_list(request):
     target_model_name = request.GET['target_model']
     
-    entries = globals()[target_model_name].objects.all()
-    json = simplejson.dumps([ {'pk': e.pk, 'name': e.name } for e in entries])
+    changed_model_name = request.GET.get('changed_model_name', False)
+    changed_id = request.GET.get('changed_id', False)    
+    
+    all_entries =  globals()[target_model_name].objects.all()
+    
+    # Page init, we want to lad all values
+    if not changed_model_name:
+        entries = all_entries
+        selected_value = 'ALL'
+    # We loadvalues in reaction to a change in another list, so we have to filter
+    else:
+        # Is the changed level higher than the level to populate ?
+        if first_rank_higher(changed_model_name, target_model_name):
+            # We returns only children of the changed level, 'ALL' is selected
+            if changed_id == 'ALL':
+                entries = all_entries
+            else:    
+                entries = all_entries.filter(**{Picture.model_fk_mapping[changed_model_name]: changed_id})
+            
+            selected_value = 'ALL'
+        else:
+            # We return every entries, but select the parent of the changed level
+            entries = all_entries
+            selected_value = getattr(globals()[changed_model_name].objects.get(pk=changed_id), Picture.model_fk_mapping[target_model_name])
+            
+               
+    
+    prepared_entries = [ {'pk': e.pk, 'name': e.name } for e in entries]     
+    json = simplejson.dumps({'entries': prepared_entries, 'selected_value': selected_value})
     
     return returns_json(json)
     

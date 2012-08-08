@@ -41,6 +41,70 @@ OpenUp = function(){
         }
     };
     
+    var taxonomySelectChanged = function(event){
+        var changed_elem_id = event.target.id;
+        var selected_id = '{sel} option:selected'.supplant({sel: changed_elem_id});
+        var changed_elem_value = $('#' + selected_id).val();
+        var conf = OpenUp.config; // Shortcut 
+        var found_current = false;
+        
+        // Get the level object for thge changed element
+        var changed_level;
+        $.each(conf.search_taxonomy_levels, function(i, level){
+            if (level.html_id === changed_elem_id) {
+                changed_level = level;
+            }
+        });
+        
+        
+        if(changed_elem_value === 'ALL') {
+            // We have to update only the "child" levels
+            $.each(conf.search_taxonomy_levels, function(i, level){
+                if(level === changed_level) {
+                    found_current = true;
+                }
+                
+                if(found_current && level !== changed_level) { // Lower levels
+                    populate_list(level, {changed_model_name: changed_level.server_model, changed_id: changed_elem_value});
+                }
+                
+            });
+            
+        } else {
+            // We have to update all the other levels
+            $.each(conf.search_taxonomy_levels, function(i, level){
+                // We don't touch the elment that changed
+                if(level !== changed_level) {
+                    populate_list(level, {changed_model_name: changed_level.server_model, changed_id: changed_elem_value});
+                }
+            });
+        }
+        
+        //console.log(changed_elem_id +':' + changed_elem_value);
+    };
+    
+    var populate_list = function(level_to_populate, additional_params) {
+        var params = {target_model: level_to_populate.server_model};
+        if (additional_params !== null) {
+            $.extend(params, additional_params);
+        }
+        
+        $.getJSON(OpenUp.config.urls.populate_taxonomic_lists, params, function(data){
+            var select_id = level_to_populate.html_id;
+            var $select = $('#' + select_id);
+            $select.empty()
+            
+            $select.append('<option value="ALL">--- ALL ---</option>');
+            
+            $.each(data.entries, function(i, entry){
+                $select.append('<option value="{id}">{name}</option>'.supplant({id: entry.pk, name: entry.name}));
+            });
+            
+            // Select entry
+            $('#{select_id} option[value="{val}"]'.supplant({select_id: select_id, val: data.selected_value})).prop('selected', true);
+        });
+    };
+    
     var generateFormEntryForTaxonomicLevel = function(level){
         var str = '<div class="control-group">\
             <label class="control-label" for="{html_id}">{label}</label>\
@@ -50,14 +114,7 @@ OpenUp = function(){
         </div>'.supplant({label: level.label, html_id: level.html_id});
         
         // Initially populate them (all values)
-        $.getJSON(OpenUp.config.urls.populate_taxonomic_lists, {target_model: level.server_model}, function(data){
-            var $select = $('#{html_id}'.supplant({html_id: level.html_id}));
-            $select.append('<option value="ALL">--- ALL ---</option>');
-            
-            $.each(data, function(i, entry){
-                $select.append('<option value="{id}">{name}</option>'.supplant({id: entry.pk, name: entry.name}));
-            });
-        });
+       populate_list(level);
         
         return str;
     };
@@ -71,6 +128,15 @@ OpenUp = function(){
                 conf.dom.taxonomic_select_container.append(generateFormEntryForTaxonomicLevel(level));
             });
         },
+        
+        // When a (taxonomic) select changes, the others follow
+        initSearchFormAjax: function(){
+            // Install handlers for all elements defined in the config
+            $.each(OpenUp.config.search_taxonomy_levels, function(i, level){
+                $('#' + level.html_id).change(taxonomySelectChanged);
+            });
+        },
+        
         initSearchFormSubmission: function(){
             var conf = OpenUp.config;
             

@@ -62,10 +62,24 @@ class Command(BaseCommand):
         
         # Some date will be stored in other tables...
         p.family = self._create_or_return_obj_by_name(Family, row['family'])
-        p.subfamily = self._create_or_return_obj_by_name(Subfamily, row['subfamily'])
-        p.genus = self._create_or_return_obj_by_name(Genus, row['genus'])
-        p.species = self._create_or_return_obj_by_name(Species, row['species'])
-        p.subspecies = self._create_or_return_obj_by_name(Subspecies, row['subspecies'])
+        p.subfamily = self._create_or_return_obj_by_name(Subfamily, row['subfamily'], [
+            {'field': 'family', 'obj': p.family}
+            ])
+        p.genus = self._create_or_return_obj_by_name(Genus, row['genus'], [
+            {'field': 'family', 'obj': p.family},
+            {'field': 'subfamily', 'obj': p.subfamily}
+            ])
+        p.species = self._create_or_return_obj_by_name(Species, row['species'], [
+            {'field': 'family', 'obj': p.family},
+            {'field': 'subfamily', 'obj': p.subfamily},
+            {'field': 'genus', 'obj': p.genus}
+            ])
+        p.subspecies = self._create_or_return_obj_by_name(Subspecies, row['subspecies'], [
+            {'field': 'family', 'obj': p.family},
+            {'field': 'subfamily', 'obj': p.subfamily},
+            {'field': 'genus', 'obj': p.genus},
+            {'field': 'species', 'obj': p.species}
+        ])
         
         p.country = self._create_or_return_obj_by_name(Country, row['country'])
         p.province = self._create_or_return_obj_by_name(Province, row['province'])
@@ -75,11 +89,14 @@ class Command(BaseCommand):
         
         p.save()  
             
-    def _create_or_return_obj_by_name(self, model, obj_name):
+    def _create_or_return_obj_by_name(self, model, obj_name, parents=None):
         """ Returns the instance of model where name match obj_name. If inexistent, instances are created on the fly. """
         
         if obj_name == '':
             return None
+            
+        if parents is None:
+            parents = []    
         
         try:
             instance = model.objects.get(name = obj_name)
@@ -87,6 +104,10 @@ class Command(BaseCommand):
             # If such an instance doesn't exists, let's create one
             instance = model()
             instance.name = obj_name
+            
+            for higher_level in parents:
+                setattr(instance, higher_level['field'], higher_level['obj'])
+        
             instance.save()
         
         return instance

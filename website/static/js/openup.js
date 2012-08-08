@@ -89,6 +89,8 @@ OpenUp = function(){
             $.extend(params, additional_params);
         }
         
+        $('#spinner_' + level_to_populate.html_id).show();
+        
         $.getJSON(OpenUp.config.urls.populate_taxonomic_lists, params, function(data){
             var select_id = level_to_populate.html_id;
             var $select = $('#' + select_id);
@@ -102,6 +104,8 @@ OpenUp = function(){
             
             // Select entry
             $('#{select_id} option[value="{val}"]'.supplant({select_id: select_id, val: data.selected_value})).prop('selected', true);
+            
+            $('#spinner_' + level_to_populate.html_id).hide();
         });
     };
     
@@ -110,13 +114,14 @@ OpenUp = function(){
             <label class="control-label" for="{html_id}">{label}</label>\
             <div class="controls">\
                 <select id="{html_id}"></select>\
+                <img id="spinner_{html_id}" src="{spinner_path}" />\
             </div>\
-        </div>'.supplant({label: level.label, html_id: level.html_id});
+        </div>'.supplant({label: level.label, html_id: level.html_id, spinner_path: OpenUp.config.spinner_path});
         
         // Initially populate them (all values)
        populate_list(level);
         
-        return str;
+       return str;
     };
 
     return {

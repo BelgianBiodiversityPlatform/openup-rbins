@@ -79,8 +79,7 @@ OpenUp = function(){
                 }
             });
         }
-        
-        //console.log(changed_elem_id +':' + changed_elem_value);
+
     };
     
     var populate_list = function(level_to_populate, additional_params) {

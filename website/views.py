@@ -54,7 +54,7 @@ def search(request):
         
         
     # Paginate
-    paginator = Paginator(pictures_list, 6) # TODO: move to settings
+    paginator = Paginator(pictures_list, 6)
     
     try:
         pictures = paginator.page(page)

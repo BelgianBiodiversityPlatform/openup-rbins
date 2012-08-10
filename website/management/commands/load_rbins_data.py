@@ -99,7 +99,17 @@ class Command(BaseCommand):
             parents = []    
         
         try:
-            instance = model.objects.get(name = obj_name)
+            # We look for something with the same name...
+            filters = {'name': obj_name}
+            
+            # ... But also the same parents (same species name under diferent Genera)
+            parent_filters = [{higher_level['field']: higher_level['obj']} for higher_level in parents]
+            for f in parent_filters:
+                filters.update(f)
+                
+            instance = model.objects.get(**filters)
+            
+            
         except ObjectDoesNotExist:
             # If such an instance doesn't exists, let's create one
             instance = model()

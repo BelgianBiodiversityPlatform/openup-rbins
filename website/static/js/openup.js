@@ -47,6 +47,7 @@ OpenUp = function(){
         var changed_elem_value = $('#' + selected_id).val();
         var conf = OpenUp.config; // Shortcut 
         var found_current = false;
+        var nextone;
         
         // Get the level object for thge changed element
         var changed_level;
@@ -62,10 +63,16 @@ OpenUp = function(){
             $.each(conf.search_taxonomy_levels, function(i, level){
                 if(level === changed_level) {
                     found_current = true;
+                    
                 }
                 
                 if(found_current && level !== changed_level) { // Lower levels
                     populate_list(level, {changed_model_name: changed_level.server_model, changed_id: changed_elem_value});
+                    
+                    // Hide all the levels lower than current (if required by config)
+                    if(level.hide_until_parent_set) {
+                        $('#' + getContainerId(level)).hide();
+                    }
                 }
                 
             });
@@ -76,6 +83,14 @@ OpenUp = function(){
                 // We don't touch the elment that changed
                 if(level !== changed_level) {
                     populate_list(level, {changed_model_name: changed_level.server_model, changed_id: changed_elem_value});
+                } else {
+                    // We're on the element that changed... show the child, if necessary
+                    nextone = conf.search_taxonomy_levels[i+1];               
+                    if (nextone.hide_until_parent_set) {
+                        // Maybe it's already displayed ? unnecessary op. in that case...
+                        $('#' + getContainerId(nextone)).show();
+                    }
+                    
                 }
             });
         }
@@ -108,14 +123,30 @@ OpenUp = function(){
         });
     };
     
+    var getContainerId = function(level) {
+      return 'container_' + level.html_id;
+    };
+    
     var generateFormEntryForTaxonomicLevel = function(level){
-        var str = '<div class="control-group">\
+        var add_style;
+        
+        if (level.hide_until_parent_set){
+            add_style="display: none;";
+        }
+        
+        var str = '<div id="{level_container_id}" style="{add_style}" class="control-group">\
             <label class="control-label" for="{html_id}">{label}</label>\
             <div class="controls">\
                 <select id="{html_id}"></select>\
                 <img id="spinner_{html_id}" src="{spinner_path}" />\
             </div>\
-        </div>'.supplant({label: level.label, html_id: level.html_id, spinner_path: OpenUp.config.spinner_path});
+        </div>'.supplant({
+            add_style: add_style, 
+            label: level.label, 
+            html_id: level.html_id, 
+            spinner_path: OpenUp.config.spinner_path,
+            level_container_id: getContainerId(level)
+            });
         
         // Initially populate them (all values)
        populate_list(level);

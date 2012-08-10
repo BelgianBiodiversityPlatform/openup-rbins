@@ -90,9 +90,9 @@
     // Taxonomy levels included in search form
     // They shoud be sorted by rank 
     OpenUp.config.search_taxonomy_levels = [
-      {label: 'Family', html_id: 'family', server_model: 'Family'}, 
-      {label: 'Genus', html_id: 'genus', server_model: 'Genus'},
-      {label: 'Species', html_id: 'species', server_model: 'Species'}
+      {label: 'Family', html_id: 'family', server_model: 'Family', hide_until_parent_set: false}, 
+      {label: 'Genus', html_id: 'genus', server_model: 'Genus', hide_until_parent_set: false},
+      {label: 'Species', html_id: 'species', server_model: 'Species', hide_until_parent_set: true}
     ];
     
     OpenUp.config.spinner_path = "{{ STATIC_URL }}img/ajax-loader.gif";

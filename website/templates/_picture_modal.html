@@ -23,7 +23,7 @@
         <tr><td><b>Subspecies:</b></td><td> {{ picture.subspecies.name|default:"/" }}</td></tr> 
       </table>
 
-      <h2>Collect</h2>
+      <h2>Capture</h2>
       <table class="table table-condensed table-striped table-bordered">
         <tr><td><b>Date:</b></td><td> {{ picture.eventdate_verbatim|default:"/" }}</td></tr>
         <tr><td><b>Country:</b></td><td> {{ picture.country.name|default:"/" }}</td></tr>
@@ -33,7 +33,7 @@
 
       <h2>Picture</h2>
       <table class="table table-condensed table-striped table-bordered">
-        <tr><td><b>Id:</b></td><td> {{ picture.id|default:"/" }}</td></tr>
+        <tr><td><b>Filename:</b></td><td>{{ picture.origpathname }}</td></tr>
         <tr><td><b>View:</b></td><td> {{ picture.view.name|default:"/" }}</td></tr>    
       </table>
 

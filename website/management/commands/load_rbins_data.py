@@ -59,6 +59,7 @@ class Command(BaseCommand):
         p.eventdate_verbatim = row['eventdate']
         p.picture_id = row['unitid']
         p.fileuri = row['fileuri']
+        p.origpathname = row['origpathname']
         
         # Some date will be stored in other tables...
         p.family = self._create_or_return_obj_by_name(Family, row['family'])

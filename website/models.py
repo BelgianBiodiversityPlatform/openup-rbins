@@ -76,6 +76,7 @@ class Picture(models.Model):
     view = models.ForeignKey(ViewType)
     picture_id = models.IntegerField()
     fileuri = models.URLField()
+    origpathname = models.CharField(max_length=200)
     
     # For search:returns the FK name based on the model we want
     # This FK is in use in the Picture table, but also in the different Taxon models (to reference the parent levels)

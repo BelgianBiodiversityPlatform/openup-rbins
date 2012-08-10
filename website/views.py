@@ -95,7 +95,7 @@ def ajax_populate_list(request):
     changed_model_name = request.GET.get('changed_model_name', False)
     changed_id = request.GET.get('changed_id', False)    
     
-    all_entries =  globals()[target_model_name].objects.all()
+    all_entries =  globals()[target_model_name].objects.all().order_by('name')
     
     # Page init, we want to lad all values
     if not changed_model_name:

@@ -11,7 +11,6 @@ def first_rank_higher(first, second):
 class Family(models.Model):
     name = models.CharField(max_length=200)
     
-    @property
     def count_pictures(self):
         return len(self.picture_set.all())
 

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load querystring_tags %}
+{% load querystring_tags l10n %}
 
 {% block content %}
 <h1>{{ pictures.paginator.count }} results</h1>
@@ -18,7 +18,7 @@
   
     {% for picture in pictures %}
     <li class="span2">
-      <a class="thumbnail" data-toggle="lightbox" data-target="#lightbox_{{ picture.id }}">
+      <a class="thumbnail" data-toggle="lightbox" data-target="#lightbox_{{ picture.id|unlocalize }}">
         <img src={{ picture.fileuri }} alt="" />
       </a>
     </li> 

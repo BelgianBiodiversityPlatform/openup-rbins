@@ -1,5 +1,7 @@
+{% load l10n %} 
+
 {# TODO: Add more fields + better design  #}
-<div class="lightbox fade" id="lightbox_{{ picture.id }}" style="display: none;">
+<div class="lightbox fade" id="lightbox_{{ picture.id|unlocalize }}" style="display: none;">
 
   <div class="lightbox-content">
 

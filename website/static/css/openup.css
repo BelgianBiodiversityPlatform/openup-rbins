@@ -22,11 +22,13 @@ h1#main_title {
 #about_box {
     text-align: center;
     color: white;
-    background-color: black;
+    background-color: #222;
     
     -webkit-border-radius: 0;
     -moz-border-radius: 0;
     border-radius: 0;
+    
+    box-shadow: 3px 3px 6px #888;
 }
 
 #about_box h1 {

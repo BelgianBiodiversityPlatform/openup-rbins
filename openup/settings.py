@@ -170,6 +170,7 @@ if HOSTNAME == 'nicolass-macbook-pro':
 else:
     # For heroku:
     import dj_database_url
-    DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}        
+    DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
+    STATIC_URL = 'openuprbins' + STATIC_URL        
     
 PICTURES_ONLY_SUBFOLDER = 'pictures_only'    

@@ -108,7 +108,8 @@ OpenUp = function(){
         $.getJSON(OpenUp.config.urls.populate_taxonomic_lists, params, function(data){
             var select_id = level_to_populate.html_id;
             var $select = $('#' + select_id);
-            $select.empty();
+            //$select.empty();
+            $select[0].options.length = 0;
             
             $select.append('<option value="ALL">--- ALL ---</option>');
             

@@ -16,7 +16,7 @@ OpenUp = function(){
     var getTaxonomicFilterFromLists = function(taxonomy_levels){
         // We start by the most specific (=last) one
         var reversed = taxonomy_levels.slice(0).reverse();
-        var found_model, found_id;
+        var found_model, found_id, var found_label;
         
         $.each(reversed, function(i, level){
             //console.log('P: ' + level.html_id);

@@ -105,7 +105,7 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-    #'django.contrib.sites',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.webdesign',
@@ -171,6 +171,6 @@ else:
     # For heroku:
     import dj_database_url
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
-    STATIC_URL = 'openuprbins' + STATIC_URL        
+    #STATIC_URL = 'openuprbins' + STATIC_URL        
     
 PICTURES_ONLY_SUBFOLDER = 'pictures_only'    

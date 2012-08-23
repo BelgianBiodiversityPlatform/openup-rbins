@@ -86,7 +86,7 @@ OpenUp = function(){
                 } else {
                     // We're on the element that changed... show the child, if necessary
                     nextone = conf.search_taxonomy_levels[i+1];               
-                    if (nextone.hide_until_parent_set) {
+                    if (nextone && nextone.hide_until_parent_set) {
                         // Maybe it's already displayed ? unnecessary op. in that case...
                         $('#' + getContainerId(nextone)).show();
                     }
@@ -108,8 +108,8 @@ OpenUp = function(){
         $.getJSON(OpenUp.config.urls.populate_taxonomic_lists, params, function(data){
             var select_id = level_to_populate.html_id;
             var $select = $('#' + select_id);
-            //$select.empty();
-            $select[0].options.length = 0;
+           
+            $select[0].options.length = 0; // jQuery's empty() method doesn't work in IE
             
             $select.append('<option value="ALL">--- ALL ---</option>');
             

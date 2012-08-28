@@ -171,6 +171,7 @@ else:
     # For heroku:
     import dj_database_url
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
-    #STATIC_URL = 'openuprbins' + STATIC_URL        
+    #STATIC_URL = 'openuprbins' + STATIC_URL  
+    USE_X_FORWARDED_HOST = True      
     
 PICTURES_ONLY_SUBFOLDER = 'pictures_only'    

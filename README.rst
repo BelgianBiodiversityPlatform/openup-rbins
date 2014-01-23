@@ -1,3 +1,19 @@
+Running locally
+===============
+
+::
+
+    $ foreman start
+
+(to ensure same running details than on heroku)
+
+Deploy to staging
+=================
+
+::
+
+    $ git push heroku master
+
 
 Install:
 ========

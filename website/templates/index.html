@@ -39,7 +39,7 @@
           class="tag-cloud-entry" 
           style="font-size: {{ family.font_size }}px; margin: {{ family.margin }}px; opacity: {{ family.opacity }}" 
             title="{{ family.count_pictures }} picture{{ family.count_pictures|pluralize }}" 
-          href="{% url website-search-view %}?family_id={{ family.id }}">
+          href="{% url "website-search-view" %}?family_id={{ family.id }}">
             {{ family.name }}
         </a> 
         {% endfor %}
@@ -112,8 +112,8 @@
     OpenUp.config.spinner_path = "{{ STATIC_URL }}img/ajax-loader.gif";
     
     OpenUp.config.urls = {
-      'populate_taxonomic_lists': '{% url ajax-populate-list %}',
-      'search'                  : '{% url website-search-view %}'
+      'populate_taxonomic_lists': '{% url "ajax-populate-list" %}',
+      'search'                  : '{% url "website-search-view" %}'
     };
     
     OpenUp.addTaxonomySelectsToSearchForm();

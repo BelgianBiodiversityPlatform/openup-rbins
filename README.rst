@@ -3,6 +3,8 @@ Requirements
 
 The application requires the following environment variables to run:
 
+* SECRET_KEY  # http://www.miniwebtool.com/django-secret-key-generator/
+
 * GOOGLE_ANALYTICS_APP_NAME  # Something like UA-XXXXXX
 * GOOGLE_ANALYTICS_USER_EMAIL
 * GOOGLE_ANALYTICS_USER_PASS

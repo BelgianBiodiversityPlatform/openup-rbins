@@ -3,6 +3,7 @@ Requirements
 
 The application requires the following environment variables to run:
 
+* DATABASE_URL  # postgres://username:password@host:port/db_name
 * SECRET_KEY  # http://www.miniwebtool.com/django-secret-key-generator/
 
 * GOOGLE_ANALYTICS_APP_NAME  # Something like UA-XXXXXX

@@ -1,3 +1,8 @@
+Requirements
+============
+
+The application requires the following environment variables to run:
+
 Running locally
 ===============
 

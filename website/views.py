@@ -1,8 +1,9 @@
+import json
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
-from django.utils import simplejson
 
 from django.conf import settings
 from django.core.cache import cache
@@ -133,14 +134,14 @@ def ajax_populate_list(request):
             selected_value = getattr(globals()[changed_model_name].objects.get(pk=changed_id), Picture.model_fk_mapping[target_model_name])
     
     prepared_entries = [{'pk': e.pk, 'name': e.name} for e in entries]
-    json = simplejson.dumps({'entries': prepared_entries, 'selected_value': selected_value})
+    json_data = json.dumps({'entries': prepared_entries, 'selected_value': selected_value})
     
-    return returns_json(json)
+    return returns_json(json_data)
 
     
 # Helpers
 def returns_json(json):
-    return HttpResponse(json, mimetype='application/javascript')
+    return HttpResponse(json, content_type='application/javascript')
 
 
 def get_cached_analytics():

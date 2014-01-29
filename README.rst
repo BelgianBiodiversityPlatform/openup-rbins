@@ -1,11 +1,18 @@
 Running locally
 ===============
 
+To keep auto-reaload working:
+
+::
+
+    $ foreman run python manage.py runserver 0.0.0.0:5000
+
+OR to ensure same running details than on heroku:
+
 ::
 
     $ foreman start
 
-(to ensure same running details than on heroku)
 
 Deploy to staging
 =================

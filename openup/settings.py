@@ -1,4 +1,5 @@
 # Django settings for openup project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -172,4 +173,12 @@ else:
     import dj_database_url
     DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
     
-PICTURES_ONLY_SUBFOLDER = 'pictures_only'    
+PICTURES_ONLY_SUBFOLDER = 'pictures_only'
+
+# Used by tracking code + stats retrieval via API
+GOOGLE_ANALYTICS_APP_NAME = os.environ['GOOGLE_ANALYTICS_APP_NAME']
+
+# Used by stats retrieval via API
+GOOGLE_ANALYTICS_USER_EMAIL = os.environ['GOOGLE_ANALYTICS_USER_EMAIL']
+GOOGLE_ANALYTICS_USER_PASS = os.environ['GOOGLE_ANALYTICS_USER_PASS']
+GOOGLE_ANALYTICS_TABLE_ID = os.environ['GOOGLE_ANALYTICS_TABLE_ID']

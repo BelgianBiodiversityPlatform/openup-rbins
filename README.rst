@@ -3,6 +3,11 @@ Requirements
 
 The application requires the following environment variables to run:
 
+* GOOGLE_ANALYTICS_APP_NAME  # Something like UA-XXXXXX
+* GOOGLE_ANALYTICS_USER_EMAIL
+* GOOGLE_ANALYTICS_USER_PASS
+* GOOGLE_ANALYTICS_TABLE_ID  #something like ga:123456
+
 Running locally
 ===============
 

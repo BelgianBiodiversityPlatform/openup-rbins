@@ -1,5 +1,12 @@
-Requirements
+What is it ?
 ============
+
+The source code for the "Pictorial beetle collection of the Royal Belgian Institute of Natural Sciences", online at: http://projects.biodiversity.be/openuprbins/
+
+It consists of a simple Django project.
+
+Requirements
+------------
 
 The application requires the following environment variables to run:
 
@@ -12,7 +19,7 @@ The application requires the following environment variables to run:
 * GOOGLE_ANALYTICS_TABLE_ID  #something like ga:123456
 
 Running locally
-===============
+---------------
 
 To keep auto-reaload working:
 
@@ -28,7 +35,7 @@ OR to ensure same running details than on heroku:
 
 
 Deploy to staging
-=================
+-----------------
 
 ::
 
@@ -36,12 +43,12 @@ Deploy to staging
 
 
 Install:
-========
+--------
 
 $ python manage.py syncdb
 
 Data import:
-============
+------------
 
 - We first extract data into CSV from Andre's view:
   

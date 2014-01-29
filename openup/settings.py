@@ -160,10 +160,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.request"
 )
 
-import socket
-HOSTNAME = socket.gethostname().lower().split('.')[0]
-
-
 import dj_database_url
 DATABASES = {'default': dj_database_url.config(default='postgres://localhost')}
     

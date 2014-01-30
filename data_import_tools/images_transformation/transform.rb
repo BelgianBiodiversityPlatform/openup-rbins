@@ -9,9 +9,9 @@ include RMagickTextUtil
 
 require 'csv'
 
-SOURCE_IMAGE_DIR = "/home/nnoe/openup_images_source"
-DESTINATION_IMAGE_DIR = "/home/nnoe/openup_images_dest"
-LOG_FILE = File.join(DESTINATION_IMAGE_DIR, "/openup_convert_log.csv")
+SOURCE_IMAGE_DIR = "/home/nnoe/openup_images_source_2014"
+DESTINATION_IMAGE_DIR = "/home/nnoe/openup_images_dest_2014"
+LOG_FILE = File.join(DESTINATION_IMAGE_DIR, "/openup_convert_log_2014.csv")
 
 COP_IMAGE_DIR = File.join(DESTINATION_IMAGE_DIR, "/intermediate_copyright")
 RES_IMAGE_DIR = File.join(DESTINATION_IMAGE_DIR , "/intermediate_resized")
@@ -19,7 +19,8 @@ TMP_TEXT_DIR = File.join(DESTINATION_IMAGE_DIR , "/tmp_text")
 DEST_IMAGE_DIR = File.join(DESTINATION_IMAGE_DIR, "/finished")
 
 BORDER_SIZE = 100
-FINAL_WIDTH = 450 # (we have to check it's acceptable for all pictures)
+#FINAL_WIDTH = 450 # (we have to check it's acceptable for all pictures)
+FINAL_WIDTH = 700
 
 COPYRIGHT_BANNER_FILE = "./copyright.jpg"
 
@@ -118,6 +119,8 @@ pictures.each do |entry|
     
     
   write_layer_with_parents(layer, File.join(DEST_IMAGE_DIR, entry[:filename]))
+  
+  GC.start # ... or rmagick leaks will eat all memory
 end
 
 

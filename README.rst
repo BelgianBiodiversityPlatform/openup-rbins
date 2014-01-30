@@ -84,7 +84,18 @@ Process overview:
 5) We use the "OpenUP" database to populate the "website" database.
 
 
-Step 5, in details:
+Step 1: details
+---------------
+
+* Requires rmagick
+* Configure constants in transform.rb
+
+Step 2: details
+---------------
+
+* see data_import_tools/create.sql
+
+Step 5: details:
 -------------------
 
 - We first extract data into CSV from Andre's view:

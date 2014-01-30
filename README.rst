@@ -8,6 +8,13 @@ It consists of a simple Django project.
 Requirements
 ------------
 
+Required Python packages are listed in requirements.txt, install with:
+
+::
+
+    $ pip install -r requirements.txt
+
+
 The application requires the following environment variables to run:
 
 * DATABASE_URL  # postgres://username:password@host:port/db_name

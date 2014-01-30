@@ -1,0 +1,10 @@
+- First step was transforming all the images (resize, scientific name integration, RBINS logo, ...)
+- then André processed their messy Excel sheet containing scientific data related to these pictures
+- Second step is now taking the results of André in the database (dev->openup_rbins->public->rbinsphotos(view)) and renaming the picture (origpath name) to a flat file structure:
+
+1.jpg
+2.jpg
+
+(number is the ID in this rbinsphotos). This will allow to put this flat directory under Apache, and to reference these images very easily from the DB (to be served by Biocase).
+
+

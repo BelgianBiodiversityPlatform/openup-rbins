@@ -11,8 +11,8 @@ It consists of:
     * Data import/transformation scripts that are used to turn the original data (Excel files and high-resolution JPEG files) into usable data for OpenUP (to be served through BioCASE_)
     * The source code (Django_ project) of the website buld to showncase these pictures (http://projects.biodiversity.be/openuprbins/)
 
-Requirements
-============
+(Webapp) Requirements
+=====================
 
 Required Python packages are listed in requirements.txt, install with:
 
@@ -31,8 +31,8 @@ The application requires the following environment variables to run:
 * GOOGLE_ANALYTICS_USER_PASS
 * GOOGLE_ANALYTICS_TABLE_ID  #something like ga:123456
 
-Running locally
-===============
+(Webapp) Running locally
+========================
 
 To keep auto-reaload working:
 
@@ -47,16 +47,16 @@ OR to ensure same running details than on heroku:
     $ foreman start
 
 
-Deploy to staging
-=================
+(Webapp) Deploy to staging
+==========================
 
 ::
 
     $ git push heroku master
 
 
-Install:
-========
+(Webapp) Install:
+=================
 
 $ python manage.py syncdb
 

@@ -1,4 +1,4 @@
-@@total=@@passed=@@failed=0
+$total=$passed=$failed=0
 
 ROOT_DIRECTORY = "/home/nnoe/openup_images_dest_2014/finished"
 
@@ -7,16 +7,16 @@ def image(family, subdir, filename)
     return
   end
   if File.file?(filename)
-    @@total +=1
+    $total +=1
     re1 = Regexp.new('^(\w+)\s+(\(\w+\))?\s*?([\d\w-]+)\s*?(\w+)?\s*?(AT|HT|HT et|PT)?\s*?(\d+[.\d\w-]+)\s*?(\w+)?\s*?\.(\w+)$') 
 #                       GENUS  (subgenus)   species        subspecies    AT/PT/HT       number copie .jpg/JPG 
     md = re1.match(filename)
     if !md.nil? 
-      @@passed +=1
-     puts "#{@@total};#{family};#{subdir};#{filename};#{md[1]};#{md[2]};#{md[3]};#{md[4]};#{md[5]};#{md[6]};#{md[7]};#{md[8]}\n"    
+      $passed +=1
+     puts "#{$total};#{family};#{subdir};#{filename};#{md[1]};#{md[2]};#{md[3]};#{md[4]};#{md[5]};#{md[6]};#{md[7]};#{md[8]}\n"    
     else 
-      puts "#{@@total};#{family};#{subdir};#{filename};;;;;;;;\n"    
-      @@failed +=1
+      puts "#{$total};#{family};#{subdir};#{filename};;;;;;;;\n"    
+      $failed +=1
       
     end
   end
@@ -54,4 +54,4 @@ d.each(){|f|
     family(f)
   end
 }
-#puts "Count=#{@@total},Failed=#{@@failed},Passed=#{@@passed}"
+#puts "Count=#{$total},Failed=#{$failed},Passed=#{$passed}"

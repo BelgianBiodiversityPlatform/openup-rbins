@@ -1,5 +1,7 @@
 import json
+from gdata.client import BadAuthentication
 
+import logging
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -11,6 +13,8 @@ from django.core.cache import cache
 # Genus used implicitally to populate Ajax lists!
 from website.models import Family, Genus, Species, Picture, first_rank_higher
 from website.utils import ga_metrics
+
+logger = logging.getLogger(__name__)
 
 
 def my_render(template_path, request_obj, context={}):
@@ -75,7 +79,11 @@ def search(request):
 def index(request):
     families = Family.objects.all()
 
-    ga_data = get_cached_analytics()
+    try:
+        ga_data = get_cached_analytics()
+    except BadAuthentication:
+        logger.error('Google Analytics PI authentication error. Please check the credentials.')
+        ga_data = {'visitors': None, 'visits': None}  # ...avoiding indexError later
 
     metrics = {
         'pictures': Picture.objects.count(),

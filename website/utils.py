@@ -8,7 +8,11 @@ GA_TODAY_DATE = time.strftime("%Y-%m-%d")
 
 
 def ga_metrics(ga_app_name, ga_user_email, ga_user_pass, ga_table_id):
-    """Query the Google Analytics API and returns {'visits': X, 'visitors':Y}."""
+    """Query the Google Analytics API and returns {'visits': X, 'visitors':Y}.
+
+    Raises:
+      gdata.client.BadAuthentication: if Google Analytics credentials are invalid.
+    """
 
     gdata_client = gdata.analytics.client.AnalyticsClient(source=ga_app_name)
 

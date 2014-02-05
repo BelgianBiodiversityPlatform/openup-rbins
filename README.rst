@@ -77,6 +77,8 @@ And will output:
 Process overview:
 -----------------
 
+!!! Steps 1-4 are being completely rewritten !!!
+
 1) data_import_tools/images_transformation/transform.rb resize the images, add overlays, some padding, ...
 2) The Excel file is imported in the "OpenUP" PostgreSQL database (will be consumed by BioCASE_ provider)
 3) data_import_tools/images_transformation/step2/move_files.rb loop on the newly created rbinsphotos table, and for each row rename the associated image to <ROW_ID>.jpg and move it to a flat directory structure.
@@ -93,24 +95,28 @@ Step 1: details
 Step 2: details
 ---------------
 
-* see data_import_tools/create.sql
+* The OpenUP database is built using data_import_tools/create.sql
+* This SQL script relies on 2 CSV data sources:
+    * the main CSV file is just an export of the source Excel file (field separator: ; / encoding: UTF-8) !! You'll have to add a line column after remarks, containing the line number
+    * walk.csv is generated using walk.rb (that walks over the images directory)
+    
 
 Step 5: details:
--------------------
+----------------
 
 - We first extract data into CSV from Andre's view:
 
 ::  
   
     $ psql -h dev -U postgres -d openup_rbins
-    openup_rbins=# COPY (SELECT * FROM rbinsphotos) TO '/Users/nicolasnoe/Dropbox/BBPF/websites/openup/openup/data/rbinsphotos.csv' WITH CSV HEADER;
+    openup_rbins=# COPY (SELECT * FROM rbinsphotos) TO 'openup_export.csv' WITH CSV HEADER;
   
 
 - Load it into Django_:
 
 ::
 
-    $ ./manage.py load_rbins_data data/rbinsphotos.csv --truncate
+    $ ./manage.py load_rbins_data data/openup_export.csv --truncate
 
 .. _RBINS: http://www.naturalsciences.be/
 .. _OpenUP: http://open-up.eu/

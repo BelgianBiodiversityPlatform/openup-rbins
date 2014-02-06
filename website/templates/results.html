@@ -29,7 +29,32 @@
     
   </ul>
 
+{% block additional_js %}
+  <script type="text/javascript">
+    // TODO: Move code to openup.js
+    var currentPage;
 
+    var urlParamsToObj = function(){
+      var params = location.search.substring(1);
+      return JSON.parse('{"' + decodeURIparams).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+    }
+
+    var loadJSONResults = function(page_num, filters){
+
+    };
+
+    var initPage = function(){
+      currentPage = 1;
+      alert("toto");
+    };
+
+    $(function(){
+      initPage();
+    });
+  </script>
+{% endblock %} 
+
+{% comment %}
   {# TODO: implement JS-based shortcuts so they cna be used without the ALT key  #}
   {# TODO: Describe the sortcuts on the page #}
   <div class="pagination pagination-right">
@@ -55,6 +80,7 @@
       </li>
     </ul>
   </div>
+  {% endcomment %}
 
   {% endblock %}
   

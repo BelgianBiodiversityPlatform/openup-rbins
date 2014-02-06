@@ -76,6 +76,10 @@ def search(request):
                                                'force_menu_entry': 'Search'})
 
 
+def ajax_search_results(request):
+    pass
+
+
 def index(request):
     families = Family.objects.all()
 

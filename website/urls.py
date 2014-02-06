@@ -9,4 +9,5 @@ urlpatterns = patterns('website.views',
     
     # Ajax requests:
     url(r'^ajax-populate-list', 'ajax_populate_list', name="ajax-populate-list"),
+    url(r'^ajax-search-results', 'ajax_search_results', name="ou-ajax-search-results")
 )

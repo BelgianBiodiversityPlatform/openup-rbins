@@ -32,52 +32,75 @@ def my_render(template_path, request_obj, context={}):
 
 def search(request):
     # Save query parameters
-    family_id = request.GET.get('family_id')
-    sn_contains = request.GET.get('sn_contains')
-    
-    taxonomic_filter_model = request.GET.get('taxonomic_filter_model')
-    taxonomic_filter_id = request.GET.get('taxonomic_filter_id')
-    taxonomic_filter_label = request.GET.get('taxonomic_filter_label')
-    
-    page = request.GET.get('page')
+    params = extract_request_params(request)
     
     # Filtering based on query parameters
-    pictures_list = Picture.objects.all()
+    #pictures_list = Picture.objects.all()
     
     filters = []
     
-    if family_id:
-        pictures_list = pictures_list.filter(family_id__exact=family_id)
-        filters.append({'name': 'Family', 'value': Family.objects.get(pk=family_id).name})
+    if params['family_id']:
+        #pictures_list = pictures_list.filter(family_id__exact=params['family_id'])
+        filters.append({'name': 'Family', 'value': Family.objects.get(pk=params['family_id']).name})
         
-    if sn_contains:
-        pictures_list = pictures_list.filter(scientificname__icontains=sn_contains)
-        filters.append({'name': 'Scientific name contains', 'value': sn_contains})
+    if params['sn_contains']:
+        #pictures_list = pictures_list.filter(scientificname__icontains=params['sn_contains'])
+        filters.append({'name': 'Scientific name contains', 'value': params['sn_contains']})
         
-    if taxonomic_filter_model:
-        selected_instance = globals()[taxonomic_filter_model].objects.get(pk=taxonomic_filter_id)
+    if params['taxonomic_filter_model']:
+        selected_instance = globals()[params['taxonomic_filter_model']].objects.get(pk=params['taxonomic_filter_id'])
         
-        filters.append({'name': taxonomic_filter_label, 'value': selected_instance.name})
+        filters.append({'name': params['taxonomic_filter_label'], 'value': selected_instance.name})
         
-        pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[taxonomic_filter_label]: selected_instance.pk})
+        #pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[params['taxonomic_filter_label']]: selected_instance.pk})
         
     # Paginate
-    paginator = Paginator(pictures_list, 6)
+    # paginator = Paginator(pictures_list, 6)
     
-    try:
-        pictures = paginator.page(page)
-    except PageNotAnInteger:
-        pictures = paginator.page(1)  # If page is not an integer, deliver first page.
-    except EmptyPage:  # If page is out of range (e.g. 9999), deliver last page of results.
-        pictures = paginator.page(paginator.num_pages)
+    # try:
+    #     pictures = paginator.page(params['page'])
+    # except PageNotAnInteger:
+    #     pictures = paginator.page(1)  # If page is not an integer, deliver first page.
+    # except EmptyPage:  # If page is out of range (e.g. 9999), deliver last page of results.
+    #     pictures = paginator.page(paginator.num_pages)
     
-    return my_render('results.html', request, {'pictures': pictures,
-                                               'filters': filters,
+    return my_render('results.html', request, {'filters': filters,
                                                'force_menu_entry': 'Search'})
 
 
 def ajax_search_results(request):
-    pass
+    params = extract_request_params(request)
+
+    # 1. Filtering
+    pictures_list = Picture.objects.all()
+
+    if params['family_id']:
+        pictures_list = pictures_list.filter(family_id__exact=params['family_id'])
+    if params['sn_contains']:
+        pictures_list = pictures_list.filter(scientificname__icontains=params['sn_contains'])
+    if params['taxonomic_filter_model']:
+        selected_instance = globals()[params['taxonomic_filter_model']].objects.get(pk=params['taxonomic_filter_id'])
+        pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[params['taxonomic_filter_label']]: selected_instance.pk})
+
+    # 2. Pagination
+    paginator = Paginator(pictures_list, 6)
+    try:
+        pictures = paginator.page(params['page'])
+    except PageNotAnInteger:
+        pictures = paginator.page(1)  # If page is not an integer, deliver first page.
+    except EmptyPage:  # If page is out of range (e.g. 9999), deliver last page of results.
+        pictures = paginator.page(paginator.num_pages)
+
+    # Returns as JSON
+    json_data = json.dumps([{
+        'fileuri': picture.fileuri,
+        'picture_id': picture.picture_id,
+        'scientificname': picture.scientificname,
+        'fileuri_picture_only': picture.fileuri_picture_only
+        
+    } for picture in pictures])
+
+    return returns_json(json_data)
 
 
 def index(request):
@@ -172,6 +195,19 @@ def get_cached_analytics():
         metrics = cached_data
 
     return metrics
+
+
+def extract_request_params(request):
+    return {
+        'family_id': request.GET.get('family_id'),
+        'sn_contains': request.GET.get('sn_contains'),
+
+        'taxonomic_filter_model': request.GET.get('taxonomic_filter_model'),
+        'taxonomic_filter_id': request.GET.get('taxonomic_filter_id'),
+        'taxonomic_filter_label': request.GET.get('taxonomic_filter_label'),
+
+        'page': request.GET.get('page')
+    }
 
         
     

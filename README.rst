@@ -71,19 +71,20 @@ The data import process takes as input:
 And will output:
 
 * Transformed images that will be served on the web (two versions for each: one resized with just the animal, the other resized with additional overlays: scientific name, license info, ...).
-* A database (referencing these images) to be used as a source for OpenUP_ publication (trough the BioCASE_ provider).
+* A database (referencing these images) to be used as a source for OpenUP_ publication (trough the BioCASE_ provider). The only really necessary output consists of "rbinsphotos" (consumed by BioCASE + website import) and rbinsmetadata views 
 * Another database for the website (Django_ project).
 
 Process overview:
 -----------------
 
-!!! Steps 1-4 are being completely rewritten !!!
+!!! Steps 1-3 are overly fragile and complex, but currently necessary as the CORRECT taxonomic data is not present in the Excel file and has to be extracted from file path/names !!!
+!!! Notes for rewriting this process (and the related data requirements can be found in data_import_tools/import_review.rst)
 
 1) data_import_tools/images_transformation/transform.rb resize the images, add overlays, some padding, ...
-2) The Excel file is imported in the "OpenUP" PostgreSQL database (will be consumed by BioCASE_ provider)
+2) The Excel file and the result of an image directory "walk" are reconciled and imported in the "OpenUP" PostgreSQL database (will be consumed by BioCASE_ provider)
 3) data_import_tools/images_transformation/step2/move_files.rb loop on the newly created rbinsphotos table, and for each row rename the associated image to <ROW_ID>.jpg and move it to a flat directory structure.
 4) We publish these static files on the Internet
-5) We use the "OpenUP" database to populate the "website" database.
+5) We use the a CSV dumpp of the "OpenUP" database to populate the "website" database.
 
 
 Step 1: details

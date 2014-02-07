@@ -87,6 +87,49 @@ class Picture(models.Model):
         'Species': 'species_id',
     }
     
+    def formatted_fk_name(self, attribute_name):
+        try:
+            t = getattr(self, attribute_name)
+            return t.name
+        except AttributeError:
+            return '/'
+
+    @property
+    def subfamily_name_formatted(self):
+        return self.formatted_fk_name('subfamily')
+
+    @property
+    def family_name_formatted(self):
+        return self.formatted_fk_name('family')
+
+    @property
+    def genus_name_formatted(self):
+        return self.formatted_fk_name('genus')
+
+    @property
+    def species_name_formatted(self):
+        return self.formatted_fk_name('species')
+
+    @property
+    def subspecies_name_formatted(self):
+        return self.formatted_fk_name('subspecies')
+
+    @property
+    def country_name_formatted(self):
+        return self.formatted_fk_name('country')
+
+    @property
+    def province_name_formatted(self):
+        return self.formatted_fk_name('province')
+
+    @property
+    def station_name_formatted(self):
+        return self.formatted_fk_name('station')
+
+    @property
+    def view_name_formatted(self):
+        return self.formatted_fk_name('view')
+
     @property
     def fileuri_picture_only(self):
         # We derive it from the fileuri field

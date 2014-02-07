@@ -37,25 +37,25 @@
       <div id="lightbox-colright">
         <h2>Taxonomy</h2>
         <table class="table table-condensed table-striped table-bordered">
-          <tr><td><b>Family:</b></td><td> {{ picture.family.name|default:"/" }}</td></tr>
-          <tr><td><b>Subfamily:</b></td><td> {{ picture.subfamily.name|default:"/"}}</td></tr>
-          <tr><td><b>Genus:</b></td><td> {{ picture.genus.name|default:"/" }}</td></tr>
-          <tr><td><b>Species:</b></td><td> {{ picture.species.name|default:"/" }}</td></tr>
-          <tr><td><b>Subspecies:</b></td><td> {{ picture.subspecies.name|default:"/" }}</td></tr> 
+          <tr><td><b>Family:</b></td><td>[[ family_name ]]</td></tr>
+          <tr><td><b>Subfamily:</b></td><td>[[ subfamily_name ]]</td></tr>
+          <tr><td><b>Genus:</b></td><td>[[ genus_name ]]</td></tr>
+          <tr><td><b>Species:</b></td><td> [[ species_name ]]</td></tr>
+          <tr><td><b>Subspecies:</b></td><td>[[ subspecies_name ]]</td></tr> 
         </table>
 
         <h2>Capture</h2>
         <table class="table table-condensed table-striped table-bordered">
-          <tr><td><b>Date:</b></td><td> {{ picture.eventdate_verbatim|default:"/" }}</td></tr>
-          <tr><td><b>Country:</b></td><td> {{ picture.country.name|default:"/" }}</td></tr>
-          <tr><td><b>Province:</b></td><td> {{ picture.province.name|default:"/" }}</td></tr>
-          <tr><td><b>Station:</b></td><td> {{ picture.station.name|default:"/" }}</td></tr>
+          <tr><td><b>Date:</b></td><td>[[ eventdate_verbatim ]]</td></tr>
+          <tr><td><b>Country:</b></td><td>[[ country_name ]]</td></tr>
+          <tr><td><b>Province:</b></td><td>[[ province_name ]]</td></tr>
+          <tr><td><b>Station:</b></td><td>[[ station_name ]]</td></tr>
         </table>
 
         <h2>Picture</h2>
           <table class="table table-condensed table-striped table-bordered">
-          <tr><td><b>Filename:</b></td><td>{{ picture.origpathname }}</td></tr>
-          <tr><td><b>View:</b></td><td> {{ picture.view.name|default:"/" }}</td></tr>    
+          <tr><td><b>Filename:</b></td><td>[[ origpathname ]]</td></tr>
+          <tr><td><b>View:</b></td><td>[[ view_name ]]</td></tr>    
         </table>
 
         <img src="{{ STATIC_URL }}img/cc-by-sa.png" style="width: 100px; margin:10px;" alt="CC BY SA license" />
@@ -68,37 +68,9 @@
 <ul class="thumbnails" id="thumbnails_container">
 </ul> 
 
-{% comment %}
-  {# TODO: implement JS-based shortcuts so they cna be used without the ALT key  #}
-  {# TODO: Describe the sortcuts on the page #}
-  <div class="pagination pagination-right">
-    <ul>
-      <li {% if not pictures.has_previous %}class="disabled"{% endif %}>
-        {% if pictures.has_previous %}
-          <a accesskey="<" href="{% url "website-search-view" %}?{% qs_alter request.GET page=pictures.previous_page_number %}">«</a>
-        {% else %}
-          <a href="javascript: void(0)">«</a>
-        {% endif %}  
-      </li>
+{% endblock %}
 
-      <li class="active">
-        <a>Page {{ pictures.number }} of {{ pictures.paginator.num_pages }}.</a>
-      </li>
-
-      <li {% if not pictures.has_next %}class="disabled"{% endif %}>
-        {% if pictures.has_next %}
-          <a accesskey=">" href="{% url "website-search-view" %}?{% qs_alter request.GET page=pictures.next_page_number %}">»</a>
-        {% else %}
-          <a href="javascript: void(0)">»</a>
-        {% endif %} 
-      </li>
-    </ul>
-  </div>
-  {% endcomment %}
-
-  {% endblock %}
-
-  {% block additional_js %}
+{% block additional_js %}
   <script type="text/javascript" src="{{ STATIC_URL }}js/mustache.js"></script>
 
   <script type="text/javascript">
@@ -124,7 +96,19 @@
         'picture_id': data.picture_id,
 
         'scientificname': data.scientificname,
-        'fileuri_picture_only': data.fileuri_picture_only
+        'fileuri_picture_only': data.fileuri_picture_only,
+        'family_name': data.family_name,
+        'subfamily_name': data.subfamily_name,
+        'genus_name': data.genus_name,
+        'species_name': data.species_name,
+        'subspecies_name': data.subspecies_name,
+
+        'eventdate_verbatim': data.eventdate_verbatim,
+        'country_name': data.country_name,
+        'province_name': data.province_name,
+        'station_name': data.station_name,
+        'origpathname': data.origpathname,
+        'view_name': data.view_name
       };
 
       return Mustache.to_html(template, d);

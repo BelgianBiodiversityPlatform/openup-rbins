@@ -95,8 +95,22 @@ def ajax_search_results(request):
     json_data = json.dumps([{
         'fileuri': picture.fileuri,
         'picture_id': picture.picture_id,
+
         'scientificname': picture.scientificname,
-        'fileuri_picture_only': picture.fileuri_picture_only
+        'fileuri_picture_only': picture.fileuri_picture_only,
+        'family_name': picture.family_name_formatted,
+        'subfamily_name': picture.subfamily_name_formatted,
+        'genus_name': picture.genus_name_formatted,
+        'species_name': picture.species_name_formatted,
+        'subspecies_name': picture.subspecies_name_formatted,
+
+        'eventdate_verbatim': picture.eventdate_verbatim or '/',
+        'country_name': picture.country_name_formatted,
+        'province_name': picture.province_name_formatted,
+        'station_name': picture.station_name_formatted,
+
+        'origpathname': picture.origpathname,
+        'view_name': picture.view_name_formatted,
         
     } for picture in pictures])
 

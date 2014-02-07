@@ -77,17 +77,21 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/mustache.js"></script>
 
   <script type="text/javascript">
-    // TODO: Move code to openup.js
-    var conf = {
-      'json_results_url': '{% url "ou-ajax-search-results" %}'
-    };
+    // TODO: Move code to openup.js ?
 
     var OU_SEARCH = {
-        currentlyAdding: false
-    };
+        currentlyAdding: false,
+        finished: false,
+        currentPage: 0,
+        filters: null,
 
-    var currentPage;
-    var filters;
+        conf: {
+          json_results_url: '{% url "ou-ajax-search-results" %}',
+          rows_per_turn: 3,
+
+          under_thumbnails_elem: $('#under_thumbnails')
+        }
+    };
 
     var urlParamsToObj = function(){
       var params = location.search.substring(1);
@@ -121,30 +125,37 @@
       return Mustache.to_html(template, d);
     };
 
-    var loadJSONResults = function(page_num, filters){
+    var loadAndProcessJSON = function(page_num, filters){
       var p = filters;
       p.page = page_num;
 
-      $.getJSON(conf.json_results_url, p, function(data){
-        // TODO: If server replies False, we're done... process/display ?
-        var $new_ul = $('<ul class="thumbnails"></ul>');
+      $.getJSON(OU_SEARCH.conf.json_results_url, p, function(data){
+        if (data == 0){
+          OU_SEARCH.finished = true;
+          OU_SEARCH.conf.under_thumbnails_elem.append("No more images.");
+        } else {
+          var $new_ul = $('<ul class="thumbnails"></ul>');
 
-        $.each(data, function(i, result){
-          // Turn each JSON object to a DOM entry
-          var thumb = resultToHtml(result);
-          $new_ul.append(thumb);
-        });
+          $.each(data, function(i, result){
+            // Turn each JSON object to a DOM entry
+            var thumb = resultToHtml(result);
+            $new_ul.append(thumb);
+          });
 
-        $("#thumbnails_container").append($new_ul);
-        OU_SEARCH.currentlyAdding = false;
+          $("#thumbnails_container").append($new_ul);
+          
+          // Done, we're ready to start again...
+          OU_SEARCH.currentlyAdding = false;
+        }
       });
     };
 
     var addThumbRows = function(num_rows){
+      // "Mutex" to ensure we only fire up one "addition" at a time.
       OU_SEARCH.currentlyAdding = true;
       for (i=0; i<num_rows; i++) {
-        currentPage += 1;
-        loadJSONResults(currentPage, filters);
+       OU_SEARCH.currentPage += 1;
+        loadAndProcessJSON(OU_SEARCH.currentPage, OU_SEARCH.filters);
       }
     };
 
@@ -152,14 +163,13 @@
       // Avoid collision between Django and Mustache about curly braces
       Mustache.tags = ['[[', ']]'];
 
-      currentPage = 0;
-      filters = urlParamsToObj();
+      OU_SEARCH.filters = urlParamsToObj();
 
-      addThumbRows(3);
+      addThumbRows(OU_SEARCH.conf.rows_per_turn);
 
       $(window).scroll(function(){
-        if(($('#under_thumbnails').offset().top < $(this).height() + $(this).scrollTop()) && !OU_SEARCH.currentlyAdding){
-          addThumbRows(3);
+        if(($(OU_SEARCH.conf.under_thumbnails_elem).offset().top < $(this).height() + $(this).scrollTop()) && !OU_SEARCH.currentlyAdding && !OU_SEARCH.finished){
+          addThumbRows(OU_SEARCH.conf.rows_per_turn);
         }
       });
     

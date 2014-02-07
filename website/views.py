@@ -118,7 +118,7 @@ def ajax_search_results(request):
         } for picture in pictures])
     else:
         # Inform the client it's done
-        json_data = False
+        json_data = 0
 
     return returns_json(json_data)
 

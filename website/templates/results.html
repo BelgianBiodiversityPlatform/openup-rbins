@@ -65,8 +65,11 @@
   </div>
 </script>
 
-<ul class="thumbnails" id="thumbnails_container">
-</ul> 
+<div id="thumbnails_container">
+
+</div>
+
+<div id="under_thumbnails"></div>
 
 {% endblock %}
 
@@ -79,6 +82,10 @@
       'json_results_url': '{% url "ou-ajax-search-results" %}'
     };
 
+    var OU_SEARCH = {
+        currentlyAdding: false
+    };
+
     var currentPage;
     var filters;
 
@@ -88,7 +95,7 @@
     }
 
     var resultToHtml = function(data){
-      console.log(data);
+      //console.log(data);
 
       var template = $('#thumbnailTpl').html();
       var d = {
@@ -115,23 +122,47 @@
     };
 
     var loadJSONResults = function(page_num, filters){
-      $.getJSON(conf.json_results_url, filters, function(data){
+      var p = filters;
+      p.page = page_num;
+
+      $.getJSON(conf.json_results_url, p, function(data){
+        // TODO: If server replies False, we're done... process/display ?
+        var $new_ul = $('<ul class="thumbnails"></ul>');
+
         $.each(data, function(i, result){
           // Turn each JSON object to a DOM entry
           var thumb = resultToHtml(result);
-          $("#thumbnails_container").append(thumb);
+          $new_ul.append(thumb);
         });
+
+        $("#thumbnails_container").append($new_ul);
+        OU_SEARCH.currentlyAdding = false;
       });
     };
 
-    var initPage = function(){
-      currentPage = 1;
-      filters = urlParamsToObj();
+    var addThumbRows = function(num_rows){
+      OU_SEARCH.currentlyAdding = true;
+      for (i=0; i<num_rows; i++) {
+        currentPage += 1;
+        loadJSONResults(currentPage, filters);
+      }
+    };
 
+    var initPage = function(){
       // Avoid collision between Django and Mustache about curly braces
       Mustache.tags = ['[[', ']]'];
 
-      loadJSONResults(currentPage, filters);
+      currentPage = 0;
+      filters = urlParamsToObj();
+
+      addThumbRows(3);
+
+      $(window).scroll(function(){
+        if(($('#under_thumbnails').offset().top < $(this).height() + $(this).scrollTop()) && !OU_SEARCH.currentlyAdding){
+          addThumbRows(3);
+        }
+      });
+    
     };
 
     $(function(){

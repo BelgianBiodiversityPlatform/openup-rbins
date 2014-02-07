@@ -83,36 +83,42 @@ def ajax_search_results(request):
         pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[params['taxonomic_filter_label']]: selected_instance.pk})
 
     # 2. Pagination
+    last_page = False
+
     paginator = Paginator(pictures_list, 6)
     try:
         pictures = paginator.page(params['page'])
     except PageNotAnInteger:
         pictures = paginator.page(1)  # If page is not an integer, deliver first page.
-    except EmptyPage:  # If page is out of range (e.g. 9999), deliver last page of results.
-        pictures = paginator.page(paginator.num_pages)
+    except EmptyPage:  # If page is out of range (e.g. 9999)
+        last_page = True
 
     # Returns as JSON
-    json_data = json.dumps([{
-        'fileuri': picture.fileuri,
-        'picture_id': picture.picture_id,
+    if not last_page:
+        json_data = json.dumps([{
+            'fileuri': picture.fileuri,
+            'picture_id': picture.picture_id,
 
-        'scientificname': picture.scientificname,
-        'fileuri_picture_only': picture.fileuri_picture_only,
-        'family_name': picture.family_name_formatted,
-        'subfamily_name': picture.subfamily_name_formatted,
-        'genus_name': picture.genus_name_formatted,
-        'species_name': picture.species_name_formatted,
-        'subspecies_name': picture.subspecies_name_formatted,
+            'scientificname': picture.scientificname,
+            'fileuri_picture_only': picture.fileuri_picture_only,
+            'family_name': picture.family_name_formatted,
+            'subfamily_name': picture.subfamily_name_formatted,
+            'genus_name': picture.genus_name_formatted,
+            'species_name': picture.species_name_formatted,
+            'subspecies_name': picture.subspecies_name_formatted,
 
-        'eventdate_verbatim': picture.eventdate_verbatim or '/',
-        'country_name': picture.country_name_formatted,
-        'province_name': picture.province_name_formatted,
-        'station_name': picture.station_name_formatted,
+            'eventdate_verbatim': picture.eventdate_verbatim or '/',
+            'country_name': picture.country_name_formatted,
+            'province_name': picture.province_name_formatted,
+            'station_name': picture.station_name_formatted,
 
-        'origpathname': picture.origpathname,
-        'view_name': picture.view_name_formatted,
-        
-    } for picture in pictures])
+            'origpathname': picture.origpathname,
+            'view_name': picture.view_name_formatted,
+            
+        } for picture in pictures])
+    else:
+        # Inform the client it's done
+        json_data = False
 
     return returns_json(json_data)
 

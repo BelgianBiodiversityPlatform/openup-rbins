@@ -95,7 +95,11 @@
 
     var urlParamsToObj = function(){
       var params = location.search.substring(1);
-      return JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}')
+      if (params == ""){
+        return {};
+      } else {
+        return JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g,'":"') + '"}');
+      }
     }
 
     var resultToHtml = function(data){

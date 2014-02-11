@@ -30,7 +30,8 @@ def my_render(template_path, request_obj, context={}):
     return render_to_response(template_path, context, context_instance=RequestContext(request_obj))
 
 
-# TODO: move filter display to AJAX (ajax_Search_results, in the meta part of response, so this code can be safely removed.)
+# TODO: move filter display to AJAX (ajax_Search_results, in the meta part of response,
+# so this code can be safely removed.)
 def search(request):
     # Save query parameters
     params = extract_request_params(request)

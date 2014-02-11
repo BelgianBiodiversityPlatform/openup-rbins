@@ -26,7 +26,14 @@
       {#  RBINS logo ? #}
     </div>
 
-    <div class="row">    
+    <div class="row">
+      <h1>View all pictures</h1>
+      <div class="center-content">
+        <form action="{% url 'website-search-view' %}">
+          <button type="submit" class="btn btn-large btn-success" type="button"><i class="icon-eye-open icon-white"></i> Browse all pictures on a single page</button>
+        </form>
+      </div>
+
       <h1>Browse pictures by family</h1>
 
       {% compute_tag_cloud families count_pictures font_size 10 55 log %}
@@ -61,7 +68,7 @@
           </div>
           
           <div class="form-actions">
-            <button id="submit_search" type="submit" class="btn btn-primary">Search</button>
+            <button id="submit_search" type="submit" class="btn btn-success">Search</button>
           </div>  
         </fieldset>
       </form> 
@@ -84,9 +91,10 @@
       {# <p>Explore this data on: <a href="#">Europeana</a> | <a href="#">GBIF</a></p> #}
       
       {# TODO: Implement last update features... how ? #}
-      <p>Last updated on 21st August 2012.</p>
       <p>Visits: {{ metrics.visits }}<p>
       <p>Visitors: {{ metrics.visitors }}<p>
+
+      <p>Last updated on 11th February 2014.</p>
     </div>
   </div>
 </div>

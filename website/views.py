@@ -30,39 +30,23 @@ def my_render(template_path, request_obj, context={}):
     return render_to_response(template_path, context, context_instance=RequestContext(request_obj))
 
 
+# TODO: move filter display to AJAX (ajax_Search_results, in the meta part of response, so this code can be safely removed.)
 def search(request):
     # Save query parameters
     params = extract_request_params(request)
     
-    # Filtering based on query parameters
-    #pictures_list = Picture.objects.all()
-    
     filters = []
     
     if params['family_id']:
-        #pictures_list = pictures_list.filter(family_id__exact=params['family_id'])
         filters.append({'name': 'Family', 'value': Family.objects.get(pk=params['family_id']).name})
         
     if params['sn_contains']:
-        #pictures_list = pictures_list.filter(scientificname__icontains=params['sn_contains'])
         filters.append({'name': 'Scientific name contains', 'value': params['sn_contains']})
         
     if params['taxonomic_filter_model']:
         selected_instance = globals()[params['taxonomic_filter_model']].objects.get(pk=params['taxonomic_filter_id'])
         
         filters.append({'name': params['taxonomic_filter_label'], 'value': selected_instance.name})
-        
-        #pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[params['taxonomic_filter_label']]: selected_instance.pk})
-        
-    # Paginate
-    # paginator = Paginator(pictures_list, 6)
-    
-    # try:
-    #     pictures = paginator.page(params['page'])
-    # except PageNotAnInteger:
-    #     pictures = paginator.page(1)  # If page is not an integer, deliver first page.
-    # except EmptyPage:  # If page is out of range (e.g. 9999), deliver last page of results.
-    #     pictures = paginator.page(paginator.num_pages)
     
     return my_render('results.html', request, {'filters': filters,
                                                'force_menu_entry': 'Search'})
@@ -120,9 +104,12 @@ def ajax_search_results(request):
             
         } for picture in pictures]
 
-        meta_to_serialize = {'finished': False, 'has_next': pictures.has_next()}
+        meta_to_serialize = {'finished': False,
+                             'has_next': pictures.has_next(),
+                             'total_count': paginator.count}
         pics_to_serialize = pictures_data
     else:
+        # TODO: Do we use this in response ? if no, remove code !
         # Inform the client it's done
         meta_to_serialize = {'finished': True}
         pics_to_serialize = []

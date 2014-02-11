@@ -13,6 +13,7 @@
     <li>All pictures are displayed.</li>
 {% endfor %}
 </ul>
+<p>Results: <span id="results_counter"></span></p>
 
 <script id="thumbnailTpl" type="text/template">
   {# 1. Thumbnail #}
@@ -87,7 +88,8 @@
 
         conf: {
           json_results_url: '{% url "ou-ajax-search-results" %}',
-          under_thumbnails_elem: $('#under_thumbnails')
+          under_thumbnails_elem: $('#under_thumbnails'),
+          results_counter_elem: $('#results_counter')
         }
     };
 
@@ -133,21 +135,19 @@
 
       if (!OU_SEARCH.finished){
         $.getJSON(OU_SEARCH.conf.json_results_url, p, function(data){
-          //var $new_uls = $('<ul class="thumbnails"></ul>');
-          //var $new_uls = []
+          // Update results counter (not necessary each time, but will be useful if we make it more dynamic later).
+          OU_SEARCH.conf.results_counter_elem.text(data.meta.total_count);
 
           $.each(data.pictures, function(i, result){
-            if (i % 6 == 0){
+            // Arrange them in rows (ul) of 6 to respect the grid
+            if (i % 6 == 0){ 
               $new_ul = $('<ul class="thumbnails"></ul>');
               $("#thumbnails_container").append($new_ul);
-              //$new_uls.push($new_ul);
             }
             // Turn each JSON object to a DOM entry            
             var thumb = resultToHtml(result);
             $new_ul.append(thumb);
           });
-
-          //$("#thumbnails_container").append($new_uls);
             
           // Done, we're ready to start again...
           OU_SEARCH.currentlyAdding = false;

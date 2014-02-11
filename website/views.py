@@ -4,7 +4,7 @@ from gdata.client import BadAuthentication
 import logging
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 
 from django.conf import settings
@@ -70,7 +70,8 @@ def ajax_search_results(request):
 
     # Number of images returned in each batch.
     # They will be shown on screen in rows of 6 images
-    # The number of rows should be bigger than height of screen on initial load, or the scroll events will never fire, and the rest will not be loaded
+    # The number of rows should be bigger than height of screen on initial load, or the scroll
+    # events will never fire, and the rest will not be loaded
     paginator = Paginator(pictures_list, 4 * 6)
     
     pictures = paginator.page(params['page'])
@@ -113,7 +114,7 @@ def index(request):
         ga_data = get_cached_analytics()
     except BadAuthentication:
         logger.error('Google Analytics API authentication error. Please check the credentials.')
-        ga_data = {'visitors': None, 'visits': None}  # ...avoiding indexError later
+        ga_data = {'visitors': None, 'visits': None}  # ...avoiding IndexError later
 
     metrics = {
         'pictures': Picture.objects.count(),

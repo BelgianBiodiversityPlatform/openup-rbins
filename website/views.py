@@ -83,7 +83,7 @@ def ajax_search_results(request):
         pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[params['taxonomic_filter_label']]: selected_instance.pk})
 
     # 2. Pagination
-    last_page = False
+    out_of_range = False
 
     paginator = Paginator(pictures_list, 6)
     try:
@@ -91,11 +91,11 @@ def ajax_search_results(request):
     except PageNotAnInteger:
         pictures = paginator.page(1)  # If page is not an integer, deliver first page.
     except EmptyPage:  # If page is out of range (e.g. 9999)
-        last_page = True
+        out_of_range = True
 
     # Returns as JSON
-    if not last_page:
-        json_data = json.dumps([{
+    if not out_of_range:
+        pictures_data = [{
             'fileuri': picture.fileuri,
             'picture_id': picture.picture_id,
 
@@ -115,12 +115,17 @@ def ajax_search_results(request):
             'origpathname': picture.origpathname,
             'view_name': picture.view_name_formatted,
             
-        } for picture in pictures])
+        } for picture in pictures]
+
+        meta_to_serialize = {'finished': False, 'has_next': pictures.has_next()}
+        pics_to_serialize = pictures_data
     else:
         # Inform the client it's done
-        json_data = 0
+        meta_to_serialize = {'finished': True}
+        pics_to_serialize = []
 
-    return returns_json(json_data)
+    all_to_serialize = {'pictures': pics_to_serialize, 'meta': meta_to_serialize}
+    return returns_json(json.dumps(all_to_serialize))
 
 
 def index(request):
@@ -129,7 +134,7 @@ def index(request):
     try:
         ga_data = get_cached_analytics()
     except BadAuthentication:
-        logger.error('Google Analytics PI authentication error. Please check the credentials.')
+        logger.error('Google Analytics API authentication error. Please check the credentials.')
         ga_data = {'visitors': None, 'visits': None}  # ...avoiding indexError later
 
     metrics = {

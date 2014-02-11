@@ -87,8 +87,6 @@
 
         conf: {
           json_results_url: '{% url "ou-ajax-search-results" %}',
-          rows_per_turn: 3,
-
           under_thumbnails_elem: $('#under_thumbnails')
         }
     };
@@ -133,34 +131,36 @@
       var p = filters;
       p.page = page_num;
 
-      $.getJSON(OU_SEARCH.conf.json_results_url, p, function(data){
-        if (data == 0){
-          OU_SEARCH.finished = true;
-          OU_SEARCH.conf.under_thumbnails_elem.append("No more images.");
-        } else {
+      if (!OU_SEARCH.finished){
+        $.getJSON(OU_SEARCH.conf.json_results_url, p, function(data){
           var $new_ul = $('<ul class="thumbnails"></ul>');
 
-          $.each(data, function(i, result){
+          $.each(data.pictures, function(i, result){
             // Turn each JSON object to a DOM entry
             var thumb = resultToHtml(result);
             $new_ul.append(thumb);
           });
 
           $("#thumbnails_container").append($new_ul);
-          
+            
           // Done, we're ready to start again...
           OU_SEARCH.currentlyAdding = false;
-        }
-      });
+
+          if(!data.meta.has_next){
+            OU_SEARCH.finished = true;
+            OU_SEARCH.conf.under_thumbnails_elem.append("No more images.");
+          }
+        });
+      }
     };
 
     var addThumbRows = function(num_rows){
       // "Mutex" to ensure we only fire up one "addition" at a time.
       OU_SEARCH.currentlyAdding = true;
-      for (i=0; i<num_rows; i++) {
-       OU_SEARCH.currentPage += 1;
-        loadAndProcessJSON(OU_SEARCH.currentPage, OU_SEARCH.filters);
-      }
+      
+      // For now, we only add one row at a time... Addinfa for loop here = bad idea (concurrency)
+      OU_SEARCH.currentPage += 1;
+      loadAndProcessJSON(OU_SEARCH.currentPage, OU_SEARCH.filters); 
     };
 
     var initPage = function(){
@@ -172,7 +172,7 @@
       addThumbRows(OU_SEARCH.conf.rows_per_turn);
 
       $(window).scroll(function(){
-        if(($(OU_SEARCH.conf.under_thumbnails_elem).offset().top < $(this).height() + $(this).scrollTop()) && !OU_SEARCH.currentlyAdding && !OU_SEARCH.finished){
+        if(($(OU_SEARCH.conf.under_thumbnails_elem).offset().top < $(this).height() + $(this).scrollTop()) && !OU_SEARCH.currentlyAdding){
           addThumbRows(OU_SEARCH.conf.rows_per_turn);
         }
       });

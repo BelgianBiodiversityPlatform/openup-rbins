@@ -67,52 +67,40 @@ def ajax_search_results(request):
         pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[params['taxonomic_filter_label']]: selected_instance.pk})
 
     # 2. Pagination
-    out_of_range = False
 
     # Number of images returned in each batch.
     # They will be shown on screen in rows of 6 images
     # The number of rows should be bigger than height of screen on initial load, or the scroll events will never fire, and the rest will not be loaded
     paginator = Paginator(pictures_list, 4 * 6)
-    try:
-        pictures = paginator.page(params['page'])
-    except PageNotAnInteger:
-        pictures = paginator.page(1)  # If page is not an integer, deliver first page.
-    except EmptyPage:  # If page is out of range (e.g. 9999)
-        out_of_range = True
+    
+    pictures = paginator.page(params['page'])
+    
+    pictures_data = [{
+        'fileuri': picture.fileuri,
+        'picture_id': picture.picture_id,
 
-    # Returns as JSON
-    if not out_of_range:
-        pictures_data = [{
-            'fileuri': picture.fileuri,
-            'picture_id': picture.picture_id,
+        'scientificname': picture.scientificname,
+        'fileuri_picture_only': picture.fileuri_picture_only,
+        'family_name': picture.family_name_formatted,
+        'subfamily_name': picture.subfamily_name_formatted,
+        'genus_name': picture.genus_name_formatted,
+        'species_name': picture.species_name_formatted,
+        'subspecies_name': picture.subspecies_name_formatted,
 
-            'scientificname': picture.scientificname,
-            'fileuri_picture_only': picture.fileuri_picture_only,
-            'family_name': picture.family_name_formatted,
-            'subfamily_name': picture.subfamily_name_formatted,
-            'genus_name': picture.genus_name_formatted,
-            'species_name': picture.species_name_formatted,
-            'subspecies_name': picture.subspecies_name_formatted,
+        'eventdate_verbatim': picture.eventdate_verbatim or '/',
+        'country_name': picture.country_name_formatted,
+        'province_name': picture.province_name_formatted,
+        'station_name': picture.station_name_formatted,
 
-            'eventdate_verbatim': picture.eventdate_verbatim or '/',
-            'country_name': picture.country_name_formatted,
-            'province_name': picture.province_name_formatted,
-            'station_name': picture.station_name_formatted,
-
-            'origpathname': picture.origpathname,
-            'view_name': picture.view_name_formatted,
+        'origpathname': picture.origpathname,
+        'view_name': picture.view_name_formatted,
             
-        } for picture in pictures]
+    } for picture in pictures]
 
-        meta_to_serialize = {'finished': False,
-                             'has_next': pictures.has_next(),
-                             'total_count': paginator.count}
-        pics_to_serialize = pictures_data
-    else:
-        # TODO: Do we use this in response ? if no, remove code !
-        # Inform the client it's done
-        meta_to_serialize = {'finished': True}
-        pics_to_serialize = []
+    meta_to_serialize = {'has_next': pictures.has_next(),
+                         'total_count': paginator.count}
+    
+    pics_to_serialize = pictures_data
 
     all_to_serialize = {'pictures': pics_to_serialize, 'meta': meta_to_serialize}
     return returns_json(json.dumps(all_to_serialize))

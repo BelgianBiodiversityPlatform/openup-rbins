@@ -133,15 +133,21 @@
 
       if (!OU_SEARCH.finished){
         $.getJSON(OU_SEARCH.conf.json_results_url, p, function(data){
-          var $new_ul = $('<ul class="thumbnails"></ul>');
+          //var $new_uls = $('<ul class="thumbnails"></ul>');
+          //var $new_uls = []
 
           $.each(data.pictures, function(i, result){
-            // Turn each JSON object to a DOM entry
+            if (i % 6 == 0){
+              $new_ul = $('<ul class="thumbnails"></ul>');
+              $("#thumbnails_container").append($new_ul);
+              //$new_uls.push($new_ul);
+            }
+            // Turn each JSON object to a DOM entry            
             var thumb = resultToHtml(result);
             $new_ul.append(thumb);
           });
 
-          $("#thumbnails_container").append($new_ul);
+          //$("#thumbnails_container").append($new_uls);
             
           // Done, we're ready to start again...
           OU_SEARCH.currentlyAdding = false;

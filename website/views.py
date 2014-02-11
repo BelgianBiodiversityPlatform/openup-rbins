@@ -85,7 +85,10 @@ def ajax_search_results(request):
     # 2. Pagination
     out_of_range = False
 
-    paginator = Paginator(pictures_list, 6)
+    # Number of images returned in each batch.
+    # They will be shown on screen in rows of 6 images
+    # The number of rows should be bigger than height of screen on initial load, or the scroll events will never fire, and the rest will not be loaded
+    paginator = Paginator(pictures_list, 4 * 6)
     try:
         pictures = paginator.page(params['page'])
     except PageNotAnInteger:

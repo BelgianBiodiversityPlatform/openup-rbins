@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% load thumbnail %}
+
+{% block content %}
+    <h1>Plates</h1>
+    {% for plate in plates %}
+        {% thumbnail plate.planche_picture "200" crop="center" as im %}
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+        {% endthumbnail %}
+    {% endfor %}
+{% endblock content %}

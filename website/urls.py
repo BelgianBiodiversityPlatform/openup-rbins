@@ -6,6 +6,7 @@ urlpatterns = patterns('website.views',
     url(r'^search$', 'search', name="website-search-view"), # Search results
     url(r'^contact$', 'contact', name="website-contact"),
     url(r'^about$', 'about', name="website-about"),
+    url(r'^plates$', 'plates', name="website-browse-plates"),
     
     # Ajax requests:
     url(r'^ajax-populate-list', 'ajax_populate_list', name="ajax-populate-list"),

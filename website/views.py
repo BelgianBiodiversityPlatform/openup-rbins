@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 # Genus used implicitally to populate Ajax lists!
-from website.models import Family, Genus, Species, Picture, first_rank_higher
+from website.models import Family, Genus, Species, Picture, Planche, first_rank_higher
 from website.utils import ga_metrics
 
 logger = logging.getLogger(__name__)
@@ -138,7 +138,12 @@ def contact(request):
 
 def about(request):
     return my_render('about.html', request)
-    
+
+
+def plates(request):
+    plates = Planche.objects.all()
+
+    return my_render('plates.html', request, {'plates': plates})
 
 # AJAX/JSON views
 

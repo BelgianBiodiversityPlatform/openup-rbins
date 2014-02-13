@@ -113,7 +113,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'south',
     'django_nuages_tag',
-    'website'
+    'website',
+    'sorl.thumbnail'
 )
 
 # A sample logging configuration. The only tangible logging

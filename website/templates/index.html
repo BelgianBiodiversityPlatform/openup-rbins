@@ -27,10 +27,14 @@
     </div>
 
     <div class="row">
-      <h1>View all pictures</h1>
-      <div class="center-content">
+      <h1>View all pictures or plates</h1>
+      <div class="center-content inline-forms">
         <form action="{% url 'website-search-view' %}">
           <button type="submit" class="btn btn-large btn-success" type="button"><i class="icon-eye-open icon-white"></i> Browse all pictures on a single page</button>
+        </form>
+
+        <form action="{% url 'website-browse-plates' %}">
+          <button type="submit" class="btn btn-large btn-info" type="button"><i class="icon-book icon-white"></i> Browse all plates</button>
         </form>
       </div>
 

@@ -69,3 +69,7 @@ h1#main_title {
     text-align: center;
 }
 
+.inline-forms form{
+    display: inline;
+}
+

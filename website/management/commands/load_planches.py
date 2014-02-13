@@ -3,11 +3,13 @@
 # The planches data consists of pictures and an Excel file by Alain Drumont that match these
 # filenames to existing Pictures. It should therefore be performed after loading the initial data.
 import os
+from optparse import make_option
 
 from xlrd import open_workbook
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
+from django.core.management import call_command
 
 from website.models import Picture, Planche
 
@@ -20,14 +22,34 @@ MISSING_EXTENSION = '.jpg'
 
 
 class Command(BaseCommand):
-    
+    option_list = BaseCommand.option_list + (make_option('--truncate',
+                                             action='store_true',
+                                             dest='truncate',
+                                             default=False,
+                                             help='Remous previous Planches before loading'),)
+
     def handle(self, *args, **options):
         if len(args) == 0:
             raise CommandError('You should provide the path to the source file as an argument.')
         else:
+            if options['truncate']:
+                self.stdout.write('Truncating previous data...\n')
+                self._remove_all_plates()
+
             xls_path = args[0]
             self._import_xls_file(xls_path)
             self.stdout.write('\nDone.')
+
+    def _remove_all_plates(self):
+        # Remove models and main files...
+        for p in Planche.objects.all():
+            p.delete()  # Files will follow, thanks to signal in models.py
+
+        # Remove sorl-thumbnail cache and thumbails...
+        call_command('thumbnail', 'cleanup')
+        call_command('thumbnail', 'clear')
+        m = 'Thumbnails cleared: you may also need to restart dev. server and empty browser cache...'
+        self.stdout.write(m)
 
     def _import_xls_file(self, source_path):
         self.stdout.write('Importing data from XLS...\n')

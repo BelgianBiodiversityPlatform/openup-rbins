@@ -1,5 +1,10 @@
+import os
+
 from django.db import models
+from django.dispatch import receiver
+
 from openup import settings
+
 
 def first_rank_higher(first, second):
     RANKS = [
@@ -7,6 +12,7 @@ def first_rank_higher(first, second):
     ]
     
     return (RANKS.index(first) < RANKS.index(second))
+
 
 class Family(models.Model):
     name = models.CharField(max_length=200)
@@ -17,46 +23,55 @@ class Family(models.Model):
     class Meta:
         ordering = ["name"]
     
+
 class Subfamily(models.Model):
     name = models.CharField(max_length=200)
-    family = models.ForeignKey(Family, null=True, blank=True)   
+    family = models.ForeignKey(Family, null=True, blank=True)
+
 
 class Genus(models.Model):
     name = models.CharField(max_length=200)
     family = models.ForeignKey(Family, null=True, blank=True)
     subfamily = models.ForeignKey(Subfamily, null=True, blank=True)
 
+
 class Species(models.Model):
     name = models.CharField(max_length=200)
     family = models.ForeignKey(Family, null=True, blank=True)
     subfamily = models.ForeignKey(Subfamily, null=True, blank=True)
-    genus = models.ForeignKey(Genus, null=True, blank=True )
+    genus = models.ForeignKey(Genus, null=True, blank=True)
+
 
 class Subspecies(models.Model):
     name = models.CharField(max_length=200)
     family = models.ForeignKey(Family, null=True, blank=True)
     subfamily = models.ForeignKey(Subfamily, null=True, blank=True)
-    genus = models.ForeignKey(Genus, null=True, blank=True )
+    genus = models.ForeignKey(Genus, null=True, blank=True)
     species = models.ForeignKey(Species, null=True, blank=True)
+
     
 class ViewType(models.Model):
-    name = models.CharField(max_length=200)    
+    name = models.CharField(max_length=200)
+
 
 class Country(models.Model):
     code = models.CharField(max_length=4)
     name = models.CharField(max_length=200)
+
     
 class Province(models.Model):
     name = models.CharField(max_length=200)
+
     
 class Station(models.Model):
-    name = models.CharField(max_length=200)    
+    name = models.CharField(max_length=200)
+
 
 # Create your models here.
 class Picture(models.Model):
     scientificname = models.CharField(max_length=255)
     
-    # Taxonomy     
+    # Taxonomy
     family = models.ForeignKey(Family)
     subfamily = models.ForeignKey(Subfamily, blank=True, null=True)
     genus = models.ForeignKey(Genus)
@@ -141,6 +156,16 @@ class Picture(models.Model):
 class Planche(models.Model):
     referenced_picture = models.ForeignKey(Picture)
     planche_picture = models.ImageField(upload_to="planches")
+
+
+@receiver(models.signals.post_delete, sender=Planche)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    """Deletes picture from filesystem
+    when corresponding `Planche` object is deleted.
+    """
+    if instance.planche_picture:
+        if os.path.isfile(instance.planche_picture.path):
+            os.remove(instance.planche_picture.path)
         
 
 

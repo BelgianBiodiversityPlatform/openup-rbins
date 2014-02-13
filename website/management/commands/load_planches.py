@@ -4,8 +4,11 @@
 # filenames to existing Pictures. It should therefore be performed after loading the initial data.
 import os
 from optparse import make_option
+from tempfile import gettempdir
+import uuid
 
 from xlrd import open_workbook
+from PIL import Image
 
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
@@ -19,6 +22,8 @@ LINES_TO_SKIP = 3
 EXISTING_PICTURE_FN_INDEX = 0
 PLANCHE_FN_INDEX = 1
 MISSING_EXTENSION = '.jpg'
+
+JPG_QUALITY = 85
 
 
 class Command(BaseCommand):
@@ -73,7 +78,7 @@ class Command(BaseCommand):
             # Ok, let's create a new Planche instance
             p = Planche()
             p.referenced_picture = existing_picture[0]
-            p.planche_picture.save(planche_filename, File(open(planche_path)))
+            p.planche_picture.save(planche_filename, self._prepare_planche_content(planche_path))
             p.save()
 
             self.stdout.write('.', ending="")
@@ -81,4 +86,15 @@ class Command(BaseCommand):
             tpl = 'Planche ({planche_path}) or existing pic. ({origpathname}) cannot be found.'
             self.stdout.write(tpl.format(planche_path=planche_path,
                                          origpathname=original_picture_filename))
+
+    def _prepare_planche_content(self, original_planche_path):
+        """ Takes a path to an initial plate and return an instance of django.cores.file.File.
+         
+        - output is ready to use by models.ImageField.
+        - processing (resize, compress) may happen here.
+        """
+        im = Image.open(original_planche_path)
+        tmp_path = os.path.join(gettempdir(), str(uuid.uuid4())) + '.jpg'
+        im.save(tmp_path, quality=JPG_QUALITY)
+        return File(open(tmp_path))
 

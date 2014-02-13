@@ -6,7 +6,7 @@
     <h1>Plates</h1>
     {% for plate in plates %}
         {% thumbnail plate.planche_picture "200" crop="center" as im %}
-            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}">
+            <a href="{% url 'website-show-plate' plate.pk %}"><img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"></a>
         {% endthumbnail %}
     {% endfor %}
 {% endblock content %}

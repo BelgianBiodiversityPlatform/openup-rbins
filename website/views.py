@@ -2,7 +2,7 @@ import json
 from gdata.client import BadAuthentication
 
 import logging
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -143,7 +143,13 @@ def about(request):
 def plates(request):
     plates = Planche.objects.all()
 
-    return my_render('plates.html', request, {'plates': plates})
+    return my_render('all_plates.html', request, {'plates': plates})
+
+
+def show_plate(request, pk):
+    plate = get_object_or_404(Planche, pk=pk)
+    return my_render('plate.html', request, {'plate': plate})
+
 
 # AJAX/JSON views
 

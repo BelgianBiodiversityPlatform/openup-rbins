@@ -136,6 +136,11 @@ class Picture(models.Model):
         uri = list(self.fileuri.rpartition('/'))
         uri[-2] = '/' + settings.PICTURES_ONLY_SUBFOLDER + '/'
         return "".join(uri)
+
+
+class Planche(models.Model):
+    referenced_picture = models.ForeignKey(Picture)
+    planche_picture = models.ImageField(upload_to="planches")
         
 
 

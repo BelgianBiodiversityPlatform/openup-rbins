@@ -20,6 +20,8 @@ logger = logging.getLogger(__name__)
 def my_render(template_path, request_obj, context={}):
     menu_entries = [
         {'label': 'Search', 'url_name': 'website-index', 'icon_name': 'icon-search'},
+        {'label': 'Browse all pictures', 'url_name': 'website-search-view', 'icon_name': 'icon-eye-open'},
+        {'label': 'Browse all plates', 'url_name': 'website-browse-plates', 'icon_name': 'icon-book'},
         {'label': 'Contact', 'url_name': 'website-contact', 'icon_name': 'icon-comment'},
         {'label': 'About', 'url_name': 'website-about', 'icon_name': 'icon-asterisk'},
     ]

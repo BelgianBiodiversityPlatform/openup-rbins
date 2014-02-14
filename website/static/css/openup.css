@@ -1,5 +1,6 @@
 body {
     padding-top: 60px;
+    background-color: #eff5f4 !important; /* Less than white */
 }
 
 .sn { /* Scientific name */

@@ -2,6 +2,7 @@ import os
 
 from django.db import models
 from django.dispatch import receiver
+from django.core.exceptions import ObjectDoesNotExist
 
 from openup import settings
 
@@ -106,7 +107,7 @@ class Picture(models.Model):
         try:
             t = getattr(self, attribute_name)
             return t.name
-        except AttributeError, ObjectDoesNotExist:
+        except (AttributeError, ObjectDoesNotExist):
             return '/'
 
     @property

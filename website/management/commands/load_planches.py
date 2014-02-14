@@ -2,6 +2,11 @@
 #
 # The planches data consists of pictures and an Excel file by Alain Drumont that match these
 # filenames to existing Pictures. It should therefore be performed after loading the initial data.
+#
+# This script will currently not run on Heroku because it needs access to "local" source file.
+# - Long term solution: adapt this script so it can read (XLS and images) from S3
+# - Short term solution: fill database locally then use pgbackups to dump/restore this database to Heroku
+
 import os
 from optparse import make_option
 from tempfile import gettempdir

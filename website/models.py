@@ -106,7 +106,7 @@ class Picture(models.Model):
         try:
             t = getattr(self, attribute_name)
             return t.name
-        except AttributeError:
+        except AttributeError, ObjectDoesNotExist:
             return '/'
 
     @property

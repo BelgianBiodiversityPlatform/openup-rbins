@@ -124,6 +124,8 @@ def index(request):
         'families': Family.objects.count(),
         'species': Species.objects.count(),
 
+        'plates': Planche.objects.count(),
+
         'visitors': ga_data['visitors'],
         'visits': ga_data['visits']
     }

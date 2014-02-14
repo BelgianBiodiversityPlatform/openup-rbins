@@ -41,7 +41,6 @@ USE_THOUSAND_SEPARATOR = True
 USE_TZ = True
 
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
-MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -114,7 +113,9 @@ INSTALLED_APPS = (
     'south',
     'django_nuages_tag',
     'website',
-    'sorl.thumbnail'
+    'sorl.thumbnail',
+
+    'storages'
 )
 
 # A sample logging configuration. The only tangible logging
@@ -170,3 +171,12 @@ GOOGLE_ANALYTICS_APP_NAME = os.environ['GOOGLE_ANALYTICS_APP_NAME']
 GOOGLE_ANALYTICS_USER_EMAIL = os.environ['GOOGLE_ANALYTICS_USER_EMAIL']
 GOOGLE_ANALYTICS_USER_PASS = os.environ['GOOGLE_ANALYTICS_USER_PASS']
 GOOGLE_ANALYTICS_TABLE_ID = os.environ['GOOGLE_ANALYTICS_TABLE_ID']
+
+DEFAULT_FILE_STORAGE = 'website.storage.FixedS3BotoStorage'
+AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
+AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_ACCESS_KEY']
+
+AWS_STORAGE_BUCKET_NAME = os.environ['AWS_BUCKET_NAME']
+S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
+
+MEDIA_URL = S3_URL

@@ -96,10 +96,13 @@
       {# <p>Explore this data on: <a href="#">Europeana</a> | <a href="#">GBIF</a></p> #}
       
       {# TODO: Implement last update features... how ? #}
-      <p>Visits: {{ metrics.visits }}<p>
-      <p>Visitors: {{ metrics.visitors }}<p>
+      <h2>Visits</h2>
+      <table>
+        <tr><td><span class="badge">{{ metrics.visits }}</span></td> <td>visits</td></tr>
+        <tr><td><span class="badge">{{ metrics.visitors }}</span></td> <td>unique visitors</td></tr>
+      </table>
 
-      <p>Last updated on 11th February 2014.</p>
+      <p id="last-updated">Last updated on 14th February 2014.</p>
     </div>
   </div>
 </div>

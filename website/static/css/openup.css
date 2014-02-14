@@ -38,6 +38,10 @@ h1#main_title {
     margin-top: 0;
 }
 
+#about_box h2{
+    margin-bottom: 12px;
+}
+
 #about_box table {
     margin-bottom: 18px;
     margin-left: auto;
@@ -47,6 +51,10 @@ h1#main_title {
 #about_box table td{
     padding: 8px;
     text-align: left;
+}
+
+#about_box p#last-updated{
+    margin-top: 26px;
 }
 
 #tag_cloud {

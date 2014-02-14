@@ -180,3 +180,5 @@ AWS_STORAGE_BUCKET_NAME = os.environ['AWS_BUCKET_NAME']
 S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 
 MEDIA_URL = S3_URL
+
+NOELMAL_BLOG_URL = "http://wwb.skynetblogs.be/"

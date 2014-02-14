@@ -27,7 +27,8 @@ def my_render(template_path, request_obj, context={}):
     ]
     
     context.update({'menu_entries': menu_entries,
-                    'GA_ACCOUNT': settings.GOOGLE_ANALYTICS_APP_NAME})
+                    'GA_ACCOUNT': settings.GOOGLE_ANALYTICS_APP_NAME,
+                    'BLOG_URL': settings.NOELMAL_BLOG_URL})
     
     return render_to_response(template_path, context, context_instance=RequestContext(request_obj))
 

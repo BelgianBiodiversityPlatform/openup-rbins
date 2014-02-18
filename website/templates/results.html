@@ -56,8 +56,21 @@
         <h2>Picture</h2>
           <table class="table table-condensed table-striped table-bordered">
           <tr><td><b>Filename:</b></td><td>[[ origpathname ]]</td></tr>
-          <tr><td><b>View:</b></td><td>[[ view_name ]]</td></tr>    
+          <tr><td><b>View:</b></td><td>[[ view_name ]]</td></tr>
+          <tr>
+            <td><b>Related plates:</b></td>
+            <td>
+              [[^related_plates]]/[[/related_plates]]
+
+              [[#related_plates]]
+                [[&related_plates_link]]
+              [[/related_plates]]
+            </td>
+          </tr>    
         </table>
+
+
+        
 
         <img src="{{ STATIC_URL }}img/cc-by-sa.png" style="width: 100px; margin:10px;" alt="CC BY SA license" />
         <div class="alert alert-info">Picture by <strong>Noël MAL</strong>.</div>
@@ -123,7 +136,13 @@
         'province_name': data.province_name,
         'station_name': data.station_name,
         'origpathname': data.origpathname,
-        'view_name': data.view_name
+        'view_name': data.view_name,
+
+        'related_plates_link': function(){
+          return '<a target="_blank" href="' + this.url + '">' + this.pk + '</a>';
+        },
+
+        'related_plates': data.plates
       };
 
       return Mustache.to_html(template, d);

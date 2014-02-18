@@ -1,248 +1,358 @@
-/*
-/* =========================================================
- * bootstrap-lightbox.js v0.2
- *
- * HEAVILY based off bootstrap-modal.js v2.0.2
- * =========================================================
- * Copyright 2012 Jason Butz
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * ========================================================= */
-$(window).load(function()
-{
-!function( $ ){
+/*!=========================================================
+* bootstrap-lightbox v0.5 - 1/14/2013
+* http://jbutz.github.com/bootstrap-lightbox/
+* HEAVILY based off bootstrap-modal.js
+* ==========================================================
+* Copyright (c) 2013 Jason Butz (http://jasonbutz.info)
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+* ========================================================= */
 
 
-  "use strict"
+!function ($) {
+	// browser:true, jquery:true, node:true, laxbreak:true
+	"use strict"; // jshint ;_;
 
- /* LIGHTBOX CLASS DEFINITION
-  * ====================== */
 
-  var Lightbox = function ( content, options ) {
-    this.options = options
-    this.$element = $(content)
-      .delegate('[data-dismiss="lightbox"]', 'click.dismiss.lightbox', $.proxy(this.hide, this))
-	//
-	var that = this;
-	// Clone the element
-	that.$clone = that.$element.filter(':first').clone().css(
+/* LIGHTBOX CLASS DEFINITION
+ * ========================= */
+
+	var Lightbox = function (element, options)
 	{
-		'position': 'absolute',
-		'top'     : -2000,
-		'display' : 'block',
-		'visibility': 'visible',
-		'opacity': 100
-	}).removeClass('fade').appendTo('body');
-	that.$h = that.$clone.height();//this.$element.height();
-	that.$w = that.$clone.width();//this.$element.width();
-	that.$clone.remove();
-	that.$element.css({
-		"position": "fixed",
-		"left": ( $(window).width()  / 2 ) - ( that.$w / 2 ),
-		"top":  ( $(window).height() / 2 ) - ( that.$h / 2 )
-	});
-	//
-  }
+		this.options = options;
+		this.$element = $(element)
+			.delegate('[data-dismiss="lightbox"]', 'click.dismiss.lightbox', $.proxy(this.hide, this));
 
-  Lightbox.prototype = {
+		this.options.remote && this.$element.find('.lightbox-body').load(this.options.remote);
 
-      constructor: Lightbox
+		this.cloneSize();
+	}
 
-    , toggle: function () {
-        return this[!this.isShown ? 'show' : 'hide']()
-      }
+	Lightbox.prototype = {
+		constructor: Lightbox,
 
-    , show: function () {
-        var that = this
+		toggle: function ()
+		{
+			return this[!this.isShown ? 'show' : 'hide']();
+		},
 
-        if (this.isShown) return
+		show: function ()
+		{
+			var that = this;
+			var e    = $.Event('show')
 
-        $('body').addClass('modal-open')
+			this.$element.trigger(e);
 
-        this.isShown = true
-        this.$element.trigger('show')
+			if (this.isShown || e.isDefaultPrevented()) return;
 
-        escape.call(this)
-        backdrop.call(this, function () {
-          var transition = $.support.transition && that.$element.hasClass('fade')
 
-          !that.$element.parent().length && that.$element.appendTo(document.body) //don't move modals dom position
+			this.isShown = true;
+
+			this.escape();
+
+			this.backdrop(function ()
+			{
+				var transition = $.support.transition && that.$element.hasClass('fade');
+
+				if (!that.$element.parent().length)
+				{
+					that.$element.appendTo(document.body); //don't move modals dom position
+				}
+
+				that.$element
+					.show();
+
+				if (transition)
+				{
+					that.$element[0].offsetWidth; // force reflow
+				}
+
+				that.$element
+					.addClass('in')
+					.attr('aria-hidden', false);
+
+				that.enforceFocus();
+
+				transition ?
+					that.$element.one($.support.transition.end, function () { that.centerImage(); that.$element.focus().trigger('shown'); }) :
+					(function(){ that.centerImage(); that.$element.focus().trigger('shown'); })()
+
+			});
+		},
+		hide: function (e)
+		{
+			e && e.preventDefault();
+
+			var that = this;
+
+			e = $.Event('hide');
+
+			this.$element.trigger(e);
+
+			if (!this.isShown || e.isDefaultPrevented()) return;
+
+			this.isShown = false;
+
+			this.escape();
+
+			$(document).off('focusin.lightbox');
+
+			this.$element
+				.removeClass('in')
+				.attr('aria-hidden', true);
+
+			$.support.transition && this.$element.hasClass('fade') ?
+				this.hideWithTransition() :
+				this.hideLightbox();
+		},
+		enforceFocus: function ()
+		{
+			var that = this;
+			$(document).on('focusin.lightbox', function (e)
+			{
+				if (that.$element[0] !== e.target && !that.$element.has(e.target).length)
+				{
+					that.$element.focus();
+				}
+			});
+		},
+		escape: function ()
+		{
+			var that = this;
+			if (this.isShown && this.options.keyboard)
+			{
+				this.$element.on('keypress.dismiss.lightbox, keyup.dismiss.lightbox', function ( e )
+				{
+					e.which == 27 && that.hide();
+				});
+			}
+			else if (!this.isShown)
+			{
+				this.$element.off('keypress.dismiss.lightbox, keyup.dismiss.lightbox');
+			}
+		},
+		hideWithTransition: function ()
+		{
+			var that = this;
+			var timeout = setTimeout(function ()
+			{
+				that.$element.off($.support.transition.end);
+				that.hideLightbox();
+			}, 500);
+
+			this.$element.one($.support.transition.end, function ()
+			{
+				clearTimeout(timeout);
+				that.hideLightbox();
+			});
+		},
+		hideLightbox: function (that)
+		{
+			this.$element
+				.hide()
+				.trigger('hidden');
+
+			this.backdrop();
+		},
+		removeBackdrop: function ()
+		{
+			this.$backdrop.remove();
+			this.$backdrop = null;
+		},
+		backdrop: function (callback)
+		{
+			var that   = this;
+			var animate = this.$element.hasClass('fade') ? 'fade' : '';
+
+			if (this.isShown && this.options.backdrop)
+			{
+				var doAnimate = $.support.transition && animate;
+
+				this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
+					.appendTo(document.body);
+
+				this.$backdrop.click(
+					this.options.backdrop == 'static' ?
+						$.proxy(this.$element[0].focus, this.$element[0]) :
+						$.proxy(this.hide, this)
+				);
+
+				if (doAnimate) this.$backdrop[0].offsetWidth; // force reflow
+
+				this.$backdrop.addClass('in');
+
+				doAnimate ?
+					this.$backdrop.one($.support.transition.end, callback) :
+					callback();
+
+			}
+			else if (!this.isShown && this.$backdrop)
+			{
+				this.$backdrop.removeClass('in');
+
+				$.support.transition && this.$element.hasClass('fade')?
+					this.$backdrop.one($.support.transition.end, $.proxy(this.removeBackdrop, this)) :
+					this.removeBackdrop();
+
+			} 
+			else if (callback)
+			{
+				callback();
+			}
+		},
+		centerImage: function()
+		{
+			var that = this;
+			var resizedOffs = 0;
+			var $img;
+
+			that.h = that.$element.height();
+			that.w = that.$element.width();
 			
-          that.$element
-            .show()
-			
-		//that.$h = that.$element.find('.lightbox-content').height();
-		//that.$w = that.$element.find('.lightbox-content').width();
-		//that.$element.css({
-		//	"position": "fixed",
-		//	"left": ( $(window).width()  / 2 ) - ( that.$w / 2 ),
-		//	"top":  ( $(window).height() / 2 ) - ( that.$h / 2 )
-		//});
-		
-		
-          if (transition) {
-            that.$element[0].offsetWidth // force reflow
-          }
-
-          that.$element.addClass('in')
-
-          transition ?
-            that.$element.one($.support.transition.end, function ()
+			if(that.options.resizeToFit)
 			{
 				
-				that.$element.trigger('shown')
-			}) : that.$element.trigger('shown')
-        })
-      }
+				resizedOffs = 10;
+				$img = that.$element.find('.lightbox-content').find('img:first');
+				// Save original filesize
+				if(!$img.data('osizew')) $img.data('osizew', $img.width());
+				if(!$img.data('osizeh')) $img.data('osizeh', $img.height());
+				
+				var osizew = $img.data('osizew');
+				var osizeh = $img.data('osizeh');
+				
+				// Resize for window dimension < than image
+				// Reset previous
+				$img.css('max-width', 'none');
+				$img.css('max-height', 'none');
+				
 
-    , hide: function ( e ) {
-        e && e.preventDefault()
-		if($(e.target).is('a')) return
-        if (!this.isShown) return
+				var wOffs = 50; // STYLE ?
+				var hOffs = 40; // STYLE ?
+				if(that.$element.find('.lightbox-header').length > 0)
+				{
+					wOffs += 40;
+					hOffs += 10;
+				}
+				$img.css('max-width', $(window).width() - wOffs);
+				$img.css('max-height', $(window).height() - hOffs);
+				
+				that.w = $img.width();
+				that.h = $img.height();
+			}
 
-        var that = this
-        this.isShown = false
+			that.$element.css({
+				"position": "fixed",
+				"left": ( $(window).width()  / 2 ) - ( that.w / 2 ),
+				"top":  ( $(window).height() / 2 ) - ( that.h / 2 ) - resizedOffs
+			});
+			that.enforceFocus();
+		},
+		cloneSize: function() // The cloneSize function is only run once, but it helps keep image jumping down
+		{
+			var that = this;
+			// Clone the element and append it to the body
+			//  this allows us to get an idea for the size of the lightbox
+			that.$clone = that.$element.filter(':first').clone()
+			.css(
+			{
+				'position': 'absolute',
+				'top'     : -2000,
+				'display' : 'block',
+				'visibility': 'visible',
+				'opacity': 100
+			})
+			.removeClass('fade')
+			.appendTo('body');
 
-        $('body').removeClass('modal-open')
+			that.h = that.$clone.height();
+			that.w = that.$clone.width();
+			that.$clone.remove();
 
-        escape.call(this)
-
-        this.$element
-          .trigger('hide')
-          .removeClass('in')
-
-        $.support.transition && this.$element.hasClass('fade') ?
-          hideWithTransition.call(this) :
-          hideModal.call(this)
-      }
-
-  }
-
-
- /* LIGHTBOX PRIVATE METHODS
-  * ===================== */
-
-  function hideWithTransition() {
-    var that = this
-      , timeout = setTimeout(function () {
-          that.$element.off($.support.transition.end)
-          hideModal.call(that)
-        }, 500)
-
-    this.$element.one($.support.transition.end, function () {
-      clearTimeout(timeout)
-      hideModal.call(that)
-    })
-  }
-
-  function hideModal( that ) {
-    this.$element
-      .hide()
-      .trigger('hidden')
-
-    backdrop.call(this)
-  }
-
-  function backdrop( callback ) {
-    var that = this
-      , animate = this.$element.hasClass('fade') ? 'fade' : ''
-
-    if (this.isShown && this.options.backdrop) {
-      var doAnimate = $.support.transition && animate
-
-      this.$backdrop = $('<div class="modal-backdrop ' + animate + '" />')
-        .appendTo(document.body)
-	  this.$lightbox = $('div.lightbox')
-	  this.$content = $('div.lightbox-content')
-
-      if (this.options.backdrop != 'static') {
-        this.$backdrop.click($.proxy(this.hide, this))
-        this.$lightbox.click($.proxy(this.hide, this))
-      }
-
-      if (doAnimate) this.$backdrop[0].offsetWidth // force reflow
-
-      this.$backdrop.addClass('in')
-
-      doAnimate ?
-        this.$backdrop.one($.support.transition.end, callback) :
-        callback()
-
-    } else if (!this.isShown && this.$backdrop) {
-      this.$backdrop.removeClass('in')
-
-      $.support.transition && this.$element.hasClass('fade')?
-        this.$backdrop.one($.support.transition.end, $.proxy(removeBackdrop, this)) :
-        removeBackdrop.call(this)
-
-    } else if (callback) {
-      callback()
-    }
-  }
-
-  function removeBackdrop() {
-    this.$backdrop.remove()
-    this.$backdrop = null
-  }
-
-  function escape() {
-    var that = this
-    if (this.isShown && this.options.keyboard) {
-      $(document).on('keyup.dismiss.lightbox', function ( e ) {
-        e.which == 27 && that.hide(e)
-      })
-    } else if (!this.isShown) {
-      $(document).off('keyup.dismiss.lightbox')
-    }
-  }
+			// try and center the element based on the
+			//  height and width retrieved from the clone
+			that.$element.css({
+				"position": "fixed",
+				"left": ( $(window).width()  / 2 ) - ( that.w / 2 ),
+				"top":  ( $(window).height() / 2 ) - ( that.h / 2 )
+			});
+		}
+	}
 
 
- /* LIGHTBOX PLUGIN DEFINITION
-  * ======================= */
+/* LIGHTBOX PLUGIN DEFINITION
+ * ======================= */
 
-  $.fn.lightbox = function ( option ) {
-    return this.each(function () {
-      var $this = $(this)
-        , data = $this.data('lightbox')
-        , options = $.extend({}, $.fn.lightbox.defaults, $this.data(), typeof option == 'object' && option)
-      if (!data) $this.data('lightbox', (data = new Lightbox(this, options)))
-      if (typeof option == 'string') data[option]()
-      else if (options.show) data.show()
-    })
-  }
+	$.fn.lightbox = function (option)
+	{
+		return this.each(function ()
+		{
+			var $this   = $(this);
+			var data    = $this.data('lightbox');
+			var options = $.extend({}, $.fn.lightbox.defaults, $this.data(), typeof option == 'object' && option);
+			if (!data) $this.data('lightbox', (data = new Lightbox(this, options)));
 
-  $.fn.lightbox.defaults = {
-      backdrop: true
-    , keyboard: true
-    , show: true
-  }
+			if (typeof option == 'string')
+				data[option]()
+			else if (options.show)
+				data.show()
+		});
+	};
 
-  $.fn.lightbox.Constructor = Lightbox
+	$.fn.lightbox.defaults = {
+		backdrop: true,
+		keyboard: true,
+		show: true,
+		resizeToFit: true
+	};
+
+	$.fn.lightbox.Constructor = Lightbox;
 
 
- /* LIGHTBOX DATA-API
-  * ============== */
+/* LIGHTBOX DATA-API
+ * ================== */
 
-  $(function () {
-    $('body').on('click.lightbox.data-api', '[data-toggle="lightbox"]', function ( e ) {
-      var $this = $(this), href
-        , $target = $($this.attr('data-target') || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '')) //strip for ie7
-        , option = $target.data('lightbox') ? 'toggle' : $.extend({}, $target.data(), $this.data())
+	$(document).on('click.lightbox.data-api', '[data-toggle="lightbox"]', function (e)
+	{
+		var $this = $(this);
+		var href  = $this.attr('href');
+		var $target = $($this.attr('data-target') || (href && href.replace(/.*(?=#[^\s]+$)/, ''))); //strip for ie7
+		var option = $target.data('lightbox') ? 'toggle' : $.extend({ remote:!/#/.test(href) && href }, $target.data(), $this.data());
+		var img    = $this.attr('data-image') || false;
+		var $imgElem;
 
-      e.preventDefault()
-      $target.lightbox(option)
-    })
-  })
+		e.preventDefault();
 
-}( window.jQuery );
-});
+		if(img)
+		{
+			$target.data('original-content', $target.find('.lightbox-content').html());
+			$target.find('.lightbox-content').html('<img border="0" src="'+img+'" />');
+		}
+
+		$target
+			.lightbox(option)
+			.one('hide', function () 
+			{
+				$this.focus()
+			})
+			.one('hidden',function ()
+			{
+				if( img )
+				{
+					$target.find('.lightbox-content').html( $target.data('original-content') );
+					img = undefined;
+				}
+			});
+	})
+
+}(window.jQuery);

@@ -3,6 +3,7 @@ import os
 from django.db import models
 from django.dispatch import receiver
 from django.core.exceptions import ObjectDoesNotExist
+from django.core.urlresolvers import reverse
 
 from openup import settings
 
@@ -153,10 +154,17 @@ class Picture(models.Model):
         uri[-2] = '/' + settings.PICTURES_ONLY_SUBFOLDER + '/'
         return "".join(uri)
 
+    @property
+    def related_planches(self):
+        return [{'pk': planche.pk, 'url': planche.get_absolute_url()} for planche in self.planche_set.all()]
+
 
 class Planche(models.Model):
     referenced_picture = models.ForeignKey(Picture)
     planche_picture = models.ImageField(upload_to="planches")
+
+    def get_absolute_url(self):
+        return reverse('website-show-plate', args=[str(self.id)])
 
 
 @receiver(models.signals.post_delete, sender=Planche)

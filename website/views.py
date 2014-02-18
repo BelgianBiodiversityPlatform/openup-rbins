@@ -99,6 +99,8 @@ def ajax_search_results(request):
 
         'origpathname': picture.origpathname,
         'view_name': picture.view_name_formatted,
+
+        'plates': picture.related_planches  # List of plates ref. the same specimen
             
     } for picture in pictures]
 

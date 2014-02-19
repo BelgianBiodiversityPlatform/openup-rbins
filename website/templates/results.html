@@ -69,8 +69,8 @@
           </tr>    
         </table>
 
-
-        
+        <a class="prev_link" data-current-id="[[ picture_id ]]">Prev</a>
+        <a class="next_link" data-current-id="[[ picture_id ]]">Next</a>
 
         <img src="{{ STATIC_URL }}img/cc-by-sa.png" style="width: 100px; margin:10px;" alt="CC BY SA license" />
         <div class="alert alert-info">Picture by <strong>Noël MAL</strong>.</div>
@@ -98,6 +98,8 @@
         finished: false,
         currentPage: 0,
         filters: null,
+        // List of picture IDs currently shown used by next/prev links
+        ids_displayed: [],
 
         conf: {
           json_results_url: '{% url "ou-ajax-search-results" %}',
@@ -166,6 +168,8 @@
             // Turn each JSON object to a DOM entry            
             var thumb = resultToHtml(result);
             $new_ul.append(thumb);
+
+            OU_SEARCH.ids_displayed.push(result.picture_id); // We keep a list of displayed picture_ids, in order
           });
             
           // Done, we're ready to start again...
@@ -188,18 +192,50 @@
       loadAndProcessJSON(OU_SEARCH.currentPage, OU_SEARCH.filters); 
     };
 
+    var closeLightbox = function(picture_id){
+      $("#lightbox_" + picture_id).lightbox('hide');
+    };
+
+    var openLightbox = function(picture_id){
+      $("#lightbox_" + picture_id).lightbox();
+    };
+
+    var replaceLightbox = function(old_id, new_id){
+      closeLightbox(old_id);
+      openLightbox(new_id);
+    }
+
+    var getPicturePosition = function(picture_id){
+      return OU_SEARCH.ids_displayed.indexOf(picture_id);
+    };
+
     var initPage = function(){
       // Avoid collision between Django and Mustache about curly braces
       Mustache.tags = ['[[', ']]'];
 
       OU_SEARCH.filters = urlParamsToObj();
 
+      // initial thumbnails
       addThumbRows(OU_SEARCH.conf.rows_per_turn);
 
+      // Load more on scroll
       $(window).scroll(function(){
         if(($(OU_SEARCH.conf.under_thumbnails_elem).offset().top < $(this).height() + $(this).scrollTop()) && !OU_SEARCH.currentlyAdding){
           addThumbRows(OU_SEARCH.conf.rows_per_turn);
         }
+      });
+
+      // Previous-next handlers
+      $('#thumbnails_container').on('click', '.next_link', function(event) {
+        var current_picture_id = parseInt($(this).attr('data-current-id'));
+        var next_picture_id = OU_SEARCH.ids_displayed[getPicturePosition(current_picture_id) + 1];
+        replaceLightbox(current_picture_id, next_picture_id);
+      });
+
+      $('#thumbnails_container').on('click', '.prev_link', function(event) {
+        var current_picture_id = parseInt($(this).attr('data-current-id'));
+        var next_picture_id = OU_SEARCH.ids_displayed[getPicturePosition(current_picture_id) - 1];
+        replaceLightbox(current_picture_id, next_picture_id);
       });
     
     };

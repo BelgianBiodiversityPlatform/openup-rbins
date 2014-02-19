@@ -27,7 +27,7 @@
   <div class="lightbox fade" id="lightbox_[[ picture_id ]]" style="display: none;">
     <div class="lightbox-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">×</button>
+        <button class="my_close" data-picture-id="[[ picture_id ]]" type="button" class="close">×</button>
         <h1 class="sn">[[ scientificname ]]</h1>
       </div>
 
@@ -246,6 +246,14 @@
         replaceLightbox(current_picture_id, next_picture_id);
       });
     
+      // Because thumbnails are loaded after page setup, the close feature of Bootstrap Modal (data-dismiss attribute) does not work anymore.
+      // We therefore reimplement it here...
+      $('#thumbnails_container').on('click', '.my_close', function(event) {
+        var picture_id = parseInt($(this).attr('data-picture-id'));
+        console.log(picture_id);
+        closeLightbox(picture_id);
+      });
+
     };
 
     $(function(){

@@ -10,17 +10,16 @@
 {% endblock %} 
 
 {% block content %}
-<div>
+<p>Tip: You ca use mouse wheel to change zoom level.</p>
+<div style="text-align: center;">
     <a class="magnifier-thumb-wrapper">
        
          {% thumbnail plate.planche_picture "960" as im %}
-            {# <img id="thumb" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"> #}
              <img id="thumb" src="{{ im.url }}">
         {% endthumbnail %}
         
-        {# <img id="thumb" src="{{ plate.planche_picture.url }}"> #}
     </a>
-    <div class="magnifier-preview" id="preview" style="width: 800px; height: 452px;">sdqsd</div>
+    <div class="magnifier-preview" id="preview"></div>
 </div>
 
 {% endblock %}
@@ -41,7 +40,7 @@
             thumb: '#thumb',
             // We have to make plates public on S3, and remove all authentication parameters set by django-storages
             large: removeAllParams('{{ plate.planche_picture.url }}'),
-            largeWrapper: 'preview',
+            largeWrapper: 'preview', // Not used because of inside mode, but seems still mandatory...
             zoom: 2,
             mode: 'inside',
             zoomable: true

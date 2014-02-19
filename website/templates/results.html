@@ -18,7 +18,7 @@
 <script id="thumbnailTpl" type="text/template">
   {# 1. Thumbnail #}
   <li class="span2">
-    <a class="thumbnail" data-toggle="lightbox" data-target="#lightbox_[[ picture_id ]]">
+    <a class="thumbnail" id="thumbnail_[[ picture_id ]]" data-toggle="lightbox" data-target="#lightbox_[[ picture_id ]]">
       <img src=[[ fileuri ]] alt="" />
     </a>
   </li> 
@@ -69,8 +69,8 @@
           </tr>    
         </table>
 
-        <a class="prev_link" data-current-id="[[ picture_id ]]">Prev</a>
-        <a class="next_link" data-current-id="[[ picture_id ]]">Next</a>
+        <a class="prev_link" data-current-id="[[ picture_id ]]"><< Previous</a>
+        <a class="next_link" data-current-id="[[ picture_id ]]">Next >></a>
 
         <img src="{{ STATIC_URL }}img/cc-by-sa.png" style="width: 100px; margin:10px;" alt="CC BY SA license" />
         <div class="alert alert-info">Picture by <strong>Noël MAL</strong>.</div>
@@ -209,6 +209,12 @@
       return OU_SEARCH.ids_displayed.indexOf(picture_id);
     };
 
+    var scrollToThumbnail = function(picture_id){
+      $('html, body').animate({
+        scrollTop: $("#thumbnail_" + picture_id).offset().top
+      }, 2000);
+    };
+
     var initPage = function(){
       // Avoid collision between Django and Mustache about curly braces
       Mustache.tags = ['[[', ']]'];
@@ -229,12 +235,14 @@
       $('#thumbnails_container').on('click', '.next_link', function(event) {
         var current_picture_id = parseInt($(this).attr('data-current-id'));
         var next_picture_id = OU_SEARCH.ids_displayed[getPicturePosition(current_picture_id) + 1];
+        scrollToThumbnail(next_picture_id); // Dirty hack, hope that scrolling will automatically load next images if not done yet
         replaceLightbox(current_picture_id, next_picture_id);
       });
 
       $('#thumbnails_container').on('click', '.prev_link', function(event) {
         var current_picture_id = parseInt($(this).attr('data-current-id'));
         var next_picture_id = OU_SEARCH.ids_displayed[getPicturePosition(current_picture_id) - 1];
+        scrollToThumbnail(next_picture_id);
         replaceLightbox(current_picture_id, next_picture_id);
       });
     

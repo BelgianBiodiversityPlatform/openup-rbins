@@ -1,5 +1,51 @@
 {% extends "base.html" %}
+{% load thumbnail %}
+
+{% block additional_css %}
+<STYLE type="text/css">
+   img {
+    max-width: none !important;
+   }
+ </STYLE>
+{% endblock %} 
 
 {% block content %}
-<img src="{{ plate.planche_picture.url }}" />
+<div>
+    <a class="magnifier-thumb-wrapper">
+       
+         {% thumbnail plate.planche_picture "960" as im %}
+            {# <img id="thumb" src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}"> #}
+             <img id="thumb" src="{{ im.url }}">
+        {% endthumbnail %}
+        
+        {# <img id="thumb" src="{{ plate.planche_picture.url }}"> #}
+    </a>
+    <div class="magnifier-preview" id="preview" style="width: 800px; height: 452px;">sdqsd</div>
+</div>
+
+{% endblock %}
+
+{% block additional_js %}
+    {# We should load Magnifier.js and Event.js here so they're not loaded everywhere without reason #}
+    <script type="text/javascript">
+
+    var removeAllParams = function(old_url){
+        return old_url.substring(0, old_url.indexOf('?'));
+    }
+
+    $(function(){
+        var evt = new Event(),
+        m = new Magnifier(evt);
+
+        m.attach({
+            thumb: '#thumb',
+            // We have to make plates public on S3, and remove all authentication parameters set by django-storages
+            large: removeAllParams('{{ plate.planche_picture.url }}'),
+            largeWrapper: 'preview',
+            zoom: 2,
+            mode: 'inside',
+            zoomable: true
+        });
+    });
+    </script>
 {% endblock %}

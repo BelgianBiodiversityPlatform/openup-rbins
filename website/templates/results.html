@@ -8,6 +8,8 @@
 <h2>Active filters</h2>
 <ul id="filters_list"></ul>
 
+<ul id="refine_links"></ul>
+
 <p>Results: <span id="results_counter"></span></p>
 
 <script id="thumbnailTpl" type="text/template">
@@ -100,7 +102,8 @@
           json_results_url: '{% url "ou-ajax-search-results" %}',
           under_thumbnails_elem: $('#under_thumbnails'),
           results_counter_elem: $('#results_counter'),
-          filters_list_elem: $('#filters_list')
+          filters_list_elem: $('#filters_list'),
+          refine_links_elem: $('#refine_links')
         }
     };
 
@@ -159,15 +162,31 @@
       return Mustache.to_html(template, d);
     };
 
+    var fillRefineLinks = function(refine_links, container){
+      container.empty();
+
+      $.each(refine_links, function(index, cat){
+        var $links = [];
+        var $li = $('<li>' + cat.label + '</li>');
+
+        $.each(cat.proposals, function(index, proposal){
+          $li.append(" <a href=" + proposal.url + ">" + proposal.text + "</a>");
+        });
+
+        container.append($li);
+      });
+    };
+
     var loadAndProcessJSON = function(page_num, filters){
       var p = filters;
       p.page = page_num;
 
       if (!OU_SEARCH.finished){
         $.getJSON(OU_SEARCH.conf.json_results_url, p, function(data){
-          // Update results counter and filter lists
+          // Update results, filter lists and refine possibilities
           OU_SEARCH.conf.results_counter_elem.text(data.meta.total_count);
           fillFiltersList(data.meta.current_filters, OU_SEARCH.conf.filters_list_elem);
+          fillRefineLinks(data.meta.refine_links, OU_SEARCH.conf.refine_links_elem);
 
           $.each(data.pictures, function(i, result){
             // Arrange them in rows (ul) of 6 to respect the grid

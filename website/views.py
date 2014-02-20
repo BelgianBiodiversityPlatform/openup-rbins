@@ -1,4 +1,6 @@
 import json
+import urllib
+
 from gdata.client import BadAuthentication
 
 import logging
@@ -6,6 +8,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 
 from django.conf import settings
 from django.core.cache import cache
@@ -57,7 +60,23 @@ def ajax_search_results(request):
         pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[params['taxonomic_filter_label']]: selected_instance.pk})
         filters.append({'name': params['taxonomic_filter_label'], 'value': selected_instance.name})
 
-    # 2. Pagination
+    # 2. In specific vases, provide "search refinement" links
+    refine_links = []
+    # 2a) if searching by Family: provide subfamily refinement
+    #import pdb; pdb.set_trace()
+    if params['family_id']:
+        subfamilies = Subfamily.objects.filter(family_id__exact=params['family_id'])
+        if len(subfamilies) > 0:
+            proposals = []
+            for subfamily in subfamilies:
+                new_params = {'taxonomic_filter_model': 'Subfamily', 'taxonomic_filter_id': subfamily.pk, 'taxonomic_filter_label': 'Subfamily'}
+                url_str = reverse('website-search-view') + "?" + urllib.urlencode(new_params)
+                proposals.append({'text': subfamily.name, 'url': url_str})
+
+            refine = {'label': 'Refine by subfamily: ', 'proposals': proposals}
+            refine_links.append(refine)
+
+    # 3. Pagination
 
     # Number of images returned in each batch.
     # They will be shown on screen in rows of 6 images
@@ -91,9 +110,11 @@ def ajax_search_results(request):
             
     } for picture in pictures]
 
+    # 4. Serialize and return all that
     meta_to_serialize = {'has_next': pictures.has_next(),
                          'total_count': paginator.count,
-                         'current_filters': filters}
+                         'current_filters': filters,
+                         'refine_links': refine_links}
     
     pics_to_serialize = pictures_data
 

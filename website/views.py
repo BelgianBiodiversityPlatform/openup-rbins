@@ -10,8 +10,8 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.core.cache import cache
 
-# Genus used implicitally to populate Ajax lists!
-from website.models import Family, Genus, Species, Picture, Planche, first_rank_higher
+# Genus/Subfamily used implicitally to populate Ajax lists!
+from website.models import Family, Subfamily, Genus, Species, Picture, Planche, first_rank_higher
 from website.utils import ga_metrics
 
 logger = logging.getLogger(__name__)

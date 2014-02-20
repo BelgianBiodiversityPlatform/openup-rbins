@@ -100,6 +100,7 @@ class Picture(models.Model):
     # TODO: Make this dynamic ?
     model_fk_mapping = {
         'Family': 'family_id',
+        'Subfamily': 'subfamily_id',
         'Genus': 'genus_id',
         'Species': 'species_id',
     }

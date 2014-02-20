@@ -33,27 +33,8 @@ def my_render(template_path, request_obj, context={}):
     return render_to_response(template_path, context, context_instance=RequestContext(request_obj))
 
 
-# TODO: move filter display to AJAX (ajax_Search_results, in the meta part of response,
-# so this code can be safely removed.)
 def search(request):
-    # Save query parameters
-    params = extract_request_params(request)
-    
-    filters = []
-    
-    if params['family_id']:
-        filters.append({'name': 'Family', 'value': Family.objects.get(pk=params['family_id']).name})
-        
-    if params['sn_contains']:
-        filters.append({'name': 'Scientific name contains', 'value': params['sn_contains']})
-        
-    if params['taxonomic_filter_model']:
-        selected_instance = globals()[params['taxonomic_filter_model']].objects.get(pk=params['taxonomic_filter_id'])
-        
-        filters.append({'name': params['taxonomic_filter_label'], 'value': selected_instance.name})
-    
-    return my_render('results.html', request, {'filters': filters,
-                                               'force_menu_entry': 'Search'})
+    return my_render('results.html', request, {'force_menu_entry': 'Search'})
 
 
 def ajax_search_results(request):
@@ -61,14 +42,20 @@ def ajax_search_results(request):
 
     # 1. Filtering
     pictures_list = Picture.objects.all()
+    filters = []
 
     if params['family_id']:
         pictures_list = pictures_list.filter(family_id__exact=params['family_id'])
+        filters.append({'name': 'Family', 'value': Family.objects.get(pk=params['family_id']).name})
+
     if params['sn_contains']:
         pictures_list = pictures_list.filter(scientificname__icontains=params['sn_contains'])
+        filters.append({'name': 'Scientific name contains', 'value': params['sn_contains']})
+
     if params['taxonomic_filter_model']:
         selected_instance = globals()[params['taxonomic_filter_model']].objects.get(pk=params['taxonomic_filter_id'])
         pictures_list = pictures_list.filter(**{Picture.model_fk_mapping[params['taxonomic_filter_label']]: selected_instance.pk})
+        filters.append({'name': params['taxonomic_filter_label'], 'value': selected_instance.name})
 
     # 2. Pagination
 
@@ -105,7 +92,8 @@ def ajax_search_results(request):
     } for picture in pictures]
 
     meta_to_serialize = {'has_next': pictures.has_next(),
-                         'total_count': paginator.count}
+                         'total_count': paginator.count,
+                         'current_filters': filters}
     
     pics_to_serialize = pictures_data
 

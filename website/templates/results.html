@@ -130,7 +130,6 @@
     };
 
     var resultToHtml = function(data){
-      //console.log(data);
 
       var template = $('#thumbnailTpl').html();
       var d = {
@@ -232,7 +231,7 @@
     var replaceLightbox = function(old_id, new_id){
       closeLightbox(old_id);
       openLightbox(new_id);
-    }
+    };
 
     var getPicturePosition = function(picture_id){
       return OU_SEARCH.ids_displayed.indexOf(picture_id);
@@ -279,13 +278,33 @@
       // We therefore reimplement it here...
       $('#thumbnails_container').on('click', '.my_close', function(event) {
         var picture_id = parseInt($(this).attr('data-picture-id'));
-        console.log(picture_id);
         closeLightbox(picture_id);
       });
 
     };
 
+    var ieFix = function(){
+      // Adding Array.indexOf for IE < 9
+      if (!Array.prototype.indexOf) {
+        Array.prototype.indexOf = function(elt /*, from*/){
+          var len = this.length >>> 0;
+
+          var from = Number(arguments[1]) || 0;
+          from = (from < 0) ? Math.ceil(from) : Math.floor(from);
+          if (from < 0)
+            from += len;
+
+          for (; from < len; from++){
+            if (from in this && this[from] === elt)
+              return from;
+          }
+          return -1;
+        };
+      }
+    };
+
     $(function(){
+      ieFix();
       initPage();
     });
   </script>

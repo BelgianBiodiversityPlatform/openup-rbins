@@ -37,3 +37,9 @@ Suggested long-term solution
 - To avoid confusion next time, I suggest renaming the not curated columns: "espèce" => "verbatimSpecies"
 - Other possibilities to further improve data: show them to use different sheets to simulate RDBMS tables.
 - Let's fix a meeting / work session soon for this.
+- They'd also like that the  website is able to distinguish specimens, for example to group multiple images from the same specimen. We then need some specimen_id in the Excel file.
+- TODO: list every field needed for data import into webapp and view and check everything is there.
+
+Summary:
+- alltaxonomic data in excel
+- make the difference between specimens and Pictures !!! Not the case actually, but needed for what they want !

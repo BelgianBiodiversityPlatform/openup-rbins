@@ -15,16 +15,16 @@
 <script id="thumbnailTpl" type="text/template">
   {# 1. Thumbnail #}
   <li class="span2">
-    <a class="thumbnail" id="thumbnail_[[ picture_id ]]" data-toggle="lightbox" data-target="#lightbox_[[ picture_id ]]">
+    <a class="thumbnail fancybox" id="thumbnail_[[ picture_id ]]" href="#lightbox_[[ picture_id ]]">
       <img src=[[ fileuri ]] alt="" />
     </a>
   </li> 
 
   {# 2. Lightbox #}
-  <div class="lightbox fade" id="lightbox_[[ picture_id ]]" style="display: none;">
+  <div style="display: none;">
+  <div id="lightbox_[[ picture_id ]]">
     <div class="lightbox-content">
       <div class="modal-header">
-        <button class="my_close" data-picture-id="[[ picture_id ]]" type="button" class="close">×</button>
         <h1 class="sn">[[ scientificname ]]</h1>
       </div>
 
@@ -66,13 +66,19 @@
           </tr>    
         </table>
 
-        <a class="prev_link" data-current-id="[[ picture_id ]]"><< Previous</a>
-        <a class="next_link" data-current-id="[[ picture_id ]]">Next >></a>
+        [[#has_prev]]
+          <a class="prev_link" data-current-id="[[ picture_id ]]"><< Previous</a>
+        [[/has_prev]]
+
+        [[#has_next]]
+          <a class="next_link" data-current-id="[[ picture_id ]]">Next >></a>
+        [[/has_next]]
 
         <img src="{{ STATIC_URL }}img/cc-by-sa.png" style="width: 100px; margin:10px;" alt="CC BY SA license" />
         <div class="alert alert-info">Picture by <strong>Noël MAL</strong>.</div>
       </div>
     </div>
+  </div>
   </div>
 </script>
 
@@ -129,7 +135,7 @@
         }
     };
 
-    var resultToHtml = function(data){
+    var resultToHtml = function(data, very_last_image){
 
       var template = $('#thumbnailTpl').html();
       var d = {
@@ -155,7 +161,15 @@
           return '<a target="_blank" href="' + this.url + '">' + this.pk + '</a>';
         },
 
-        'related_plates': data.plates
+        'related_plates': data.plates,
+        
+        'has_prev': function(){
+          return (OU_SEARCH.ids_displayed[0] != data.picture_id)
+        },
+
+        'has_next': function(){
+          return !very_last_image;
+        }
       };
 
       return Mustache.to_html(template, d);
@@ -193,11 +207,16 @@
               $new_ul = $('<ul class="thumbnails"></ul>');
               $("#thumbnails_container").append($new_ul);
             }
-            // Turn each JSON object to a DOM entry            
-            var thumb = resultToHtml(result);
-            $new_ul.append(thumb);
-
             OU_SEARCH.ids_displayed.push(result.picture_id); // We keep a list of displayed picture_ids, in order
+
+            var very_last_image = false;
+            if ((!data.meta.has_next) && (i == data.pictures.length-1)){
+              very_last_image = true;
+            }
+
+            // Turn each JSON object to a DOM entry            
+            var thumb = resultToHtml(result, very_last_image);
+            $new_ul.append(thumb);
           });
             
           // Done, we're ready to start again...
@@ -220,16 +239,18 @@
       loadAndProcessJSON(OU_SEARCH.currentPage, OU_SEARCH.filters); 
     };
 
-    var closeLightbox = function(picture_id){
-      $("#lightbox_" + picture_id).lightbox('hide');
+    var closeCurrentLightbox = function(){
+      $.fancybox.close();
     };
 
     var openLightbox = function(picture_id){
-      $("#lightbox_" + picture_id).lightbox();
+      $.fancybox.open([
+        {href: "#lightbox_" + picture_id}
+        ], {'parent': '#thumbnails_container'});
     };
 
-    var replaceLightbox = function(old_id, new_id){
-      closeLightbox(old_id);
+    var replaceLightbox = function(new_id){
+      closeCurrentLightbox();
       openLightbox(new_id);
     };
 
@@ -240,7 +261,7 @@
     var scrollToThumbnail = function(picture_id){
       $('html, body').animate({
         scrollTop: $("#thumbnail_" + picture_id).offset().top
-      }, 2000);
+      }, 500);
     };
 
     var initPage = function(){
@@ -251,6 +272,10 @@
 
       // initial thumbnails
       addThumbRows(OU_SEARCH.conf.rows_per_turn);
+
+      // Fancybox init
+      $(".fancybox").fancybox({'parent': '#thumbnails_container' // Otherwise click events inside (NEXT/PREV) are not caught by .on
+      });
 
       // Load more on scroll
       $(window).scroll(function(){
@@ -264,23 +289,16 @@
         var current_picture_id = parseInt($(this).attr('data-current-id'));
         var next_picture_id = OU_SEARCH.ids_displayed[getPicturePosition(current_picture_id) + 1];
         scrollToThumbnail(next_picture_id); // Dirty hack, hope that scrolling will automatically load next images if not done yet
-        replaceLightbox(current_picture_id, next_picture_id);
+        replaceLightbox(next_picture_id);
       });
 
       $('#thumbnails_container').on('click', '.prev_link', function(event) {
         var current_picture_id = parseInt($(this).attr('data-current-id'));
         var next_picture_id = OU_SEARCH.ids_displayed[getPicturePosition(current_picture_id) - 1];
         scrollToThumbnail(next_picture_id);
-        replaceLightbox(current_picture_id, next_picture_id);
+        replaceLightbox(next_picture_id);
       });
     
-      // Because thumbnails are loaded after page setup, the close feature of Bootstrap Modal (data-dismiss attribute) does not work anymore.
-      // We therefore reimplement it here...
-      $('#thumbnails_container').on('click', '.my_close', function(event) {
-        var picture_id = parseInt($(this).attr('data-picture-id'));
-        closeLightbox(picture_id);
-      });
-
     };
 
     var ieFix = function(){

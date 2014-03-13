@@ -67,11 +67,11 @@
         </table>
 
         [[#has_prev]]
-          <a class="prev_link" data-current-id="[[ picture_id ]]"><< Previous</a>
+          <a class="prev" data-current-id="[[ picture_id ]]"><span class="myicon-backward"></span></a>
         [[/has_prev]]
 
         [[#has_next]]
-          <a class="next_link" data-current-id="[[ picture_id ]]">Next >></a>
+          <a class="next" data-current-id="[[ picture_id ]]"><span class="myicon-forward"></a>
         [[/has_next]]
 
         <img src="{{ STATIC_URL }}img/cc-by-sa.png" style="width: 100px; margin:10px;" alt="CC BY SA license" />
@@ -285,14 +285,14 @@
       });
 
       // Previous-next handlers
-      $('#thumbnails_container').on('click', '.next_link', function(event) {
+      $('#thumbnails_container').on('click', '.next', function(event) {
         var current_picture_id = parseInt($(this).attr('data-current-id'));
         var next_picture_id = OU_SEARCH.ids_displayed[getPicturePosition(current_picture_id) + 1];
         scrollToThumbnail(next_picture_id); // Dirty hack, hope that scrolling will automatically load next images if not done yet
         replaceLightbox(next_picture_id);
       });
 
-      $('#thumbnails_container').on('click', '.prev_link', function(event) {
+      $('#thumbnails_container').on('click', '.prev', function(event) {
         var current_picture_id = parseInt($(this).attr('data-current-id'));
         var next_picture_id = OU_SEARCH.ids_displayed[getPicturePosition(current_picture_id) - 1];
         scrollToThumbnail(next_picture_id);
